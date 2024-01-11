@@ -1,11 +1,12 @@
 @media screen and (max-width: $screen-sm) {
-  .container > div > .row-detail-header {
+  .container>div>.row-detail-header {
     margin-top: 20px;
   }
 }
 
 .row-detail-header {
   margin-bottom: 30px;
+
   @media screen and (max-width: $screen-sm) {
     margin-bottom: 10px;
 
@@ -63,16 +64,19 @@
   align-items: baseline;
   margin: 0;
   padding: 0;
+
   .header-title {
     display: flex;
     align-items: center;
     max-width: 70%;
+
     h2 {
       margin: 0;
       padding: 0;
       font-size: 2.5em;
       max-width: 100%;
       margin-right: 30px;
+
       a {
         width: 100%;
         overflow: hidden;
@@ -80,11 +84,13 @@
         display: inline-block;
       }
     }
+
     .header-data {
       display: flex;
       align-items: center;
     }
   }
+
   p {
     margin: 0;
     padding: 0;
@@ -111,15 +117,18 @@
 .ant-modal-body {
   padding: 30px;
 }
+
 .ReactVirtualized__List {
   outline: none;
 }
 
 .file-list {
+
   .ant-table-row-collapsed,
   .ant-table-row-expanded {
     border: 0;
   }
+
   .ant-table-row-collapsed::after,
   .ant-table-row-expanded::after {
     content: '';
@@ -139,8 +148,8 @@
     transform: scale(0.66666667) rotate(0deg);
   }
 
-  .ant-table-thead > tr > th,
-  .ant-table-tbody > tr > td {
+  .ant-table-thead>tr>th,
+  .ant-table-tbody>tr>td {
     border-bottom: 0;
     padding: 5px 0;
   }
@@ -155,22 +164,24 @@
   margin-bottom: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
+
   a {
     color: inherit;
   }
+
   a:hover,
   a:focus {
     color: $color_highlight;
   }
 }
 
-.ant-table-thead > tr > th .anticon-filter,
-.ant-table-thead > tr > th .ant-table-filter-icon {
+.ant-table-thead>tr>th .anticon-filter,
+.ant-table-thead>tr>th .ant-table-filter-icon {
   position: relative;
 }
 
-.ant-table-thead > tr > th .anticon-filter > svg,
-.ant-table-thead > tr > th .ant-table-filter-icon > svg {
+.ant-table-thead>tr>th .anticon-filter>svg,
+.ant-table-thead>tr>th .ant-table-filter-icon>svg {
   position: relative;
   top: 0;
   left: 0;
@@ -179,7 +190,7 @@
 
 // specific selector to fix the 'Files' row in the Licensed section
 @media screen and (max-width: $screen-sm) {
-  .licensed-section > div:nth-child(4) .definition__line .list-singleLine {
+  .licensed-section>div:nth-child(4) .definition__line .list-singleLine {
     display: inline;
   }
 }
@@ -206,13 +217,16 @@
   .d-contents {
     display: contents;
   }
+
   .mr-2 {
     margin-right: 10px;
   }
+
   .contribute-btn {
     @include btn-success;
     @include btn-wide;
   }
+
   .revert-btn {
     @include btn-danger;
     @include btn-wide;
@@ -267,6 +281,7 @@
     margin: 0 10px 0 auto;
   }
 }
+
 .tile-row__definition {
   width: 100%;
   display: block;
@@ -286,7 +301,7 @@
     height: 34px !important;
   }
 
-  > * {
+  >* {
     padding-right: 44px;
   }
 }
@@ -309,6 +324,7 @@
 
   svg {
     margin: auto;
+
     &:hover {
       .icon-tag {
         fill: #86b7fe;
@@ -520,7 +536,7 @@
   padding: 16px 0;
   border-top: 1px solid $border;
 
-  .row + .row {
+  .row+.row {
     margin-top: 12px;
   }
 
@@ -585,15 +601,21 @@
   .breadcrumbs-container {
     display: flex;
     padding-bottom: 15px;
+
     .breadcrumb-item {
       color: #1d52d4;
       font-weight: 500;
       font-size: 16px;
       cursor: pointer;
     }
+
     .breadcrumb-last-item {
       color: black !important;
     }
+  }
+
+  table {
+    table-layout: fixed;
   }
 
   .directory-folder-icon {
@@ -608,6 +630,7 @@
     .text-gray {
       color: $gray-500;
     }
+
     .text-black {
       color: $gray-900;
     }
@@ -642,6 +665,7 @@
   }
 
   &:hover {
+
     svg,
     svg path {
       fill: $brand !important;
@@ -650,7 +674,7 @@
 }
 
 #source-picker {
-  > div + div {
+  >div+div {
     margin-top: 12px;
   }
 
@@ -694,9 +718,11 @@
       .dropdown-item {
         transition: background $trans, color $trans;
       }
+
       .dropdown-item:hover {
         color: $gray-900;
       }
+
       .dropdown-item.active:hover,
       .dropdown-item:hover {
         color: $white;
@@ -739,10 +765,12 @@
     justify-content: flex-start;
     width: 100%;
     font-weight: 500;
+
     input {
       margin-right: 6px;
       transform: translate3d(0, 2px, 0);
     }
+
     margin-bottom: 12px;
   }
 
@@ -761,7 +789,7 @@
     justify-content: center;
     padding: 24px;
 
-    > * {
+    >* {
       width: 100%;
       margin: 0;
       padding: 0;
