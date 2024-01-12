@@ -20,5 +20,5 @@ steps:
       npm test
     displayName: 'npm test'
 
-  - script: docker build -t clearlydefined/website:latest .
+  - script: docker build -t capfei/website:latest .
     displayName: 'Docker build'
