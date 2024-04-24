@@ -61,11 +61,11 @@ export default class RuleBuilder extends Component {
             : null}
           <Col md={12} className="flex-center">
             <SpdxPicker value={'NOASSERTION'} onChange={value => updateLicense(value, path)} />
-            {/* {path.length > 0 && (
+            {path.length > 0 && (
               <Button id="removeRule" onClick={() => removeRule(path)}>
-                x
+                <CloseIcon />
               </Button>
-            )} */}
+            )}
           </Col>
         </Col>
       )
@@ -77,7 +77,7 @@ export default class RuleBuilder extends Component {
             : null}
           <Col md={12} className="flex-center editable-container">
             <SpdxPicker value={rule.license} onChange={value => updateLicense(value, path)} />
-            {rule.license && (
+            {/* rule.license && (
               <div>
                 <input
                   type="checkbox"
@@ -87,7 +87,7 @@ export default class RuleBuilder extends Component {
                 />
                 Any later version
               </div>
-            )}
+            )*/}
             {path.length > 0 && (
               <Button id="removeRule" onClick={() => removeRule(path)}>
                 <CloseIcon />
@@ -117,7 +117,7 @@ export default class RuleBuilder extends Component {
 
   render() {
     const { rule } = this.props
-    console.log(rule)
+    //console.log(rule)
     return (
       <Row>
         <Col md={12} className="flex">

@@ -104,7 +104,7 @@ export default class LicensePicker extends Component {
   }
 
   renderLicenseExpression = (isValid, licenseExpression) => (
-    <span className={`spdx-picker-expression-version ${isValid ? 'is-valisdsdsddd' : 'is-not-valid'}`}>
+    <span className={`spdx-picker-expression-version ${isValid ? 'is-valid' : 'is-not-valid'}`}>
       {licenseExpression}
     </span>
   )
@@ -117,7 +117,7 @@ export default class LicensePicker extends Component {
         <Row>
           <Col md={12} className="spdx-picker-header-title flex-center">
             <h6>License Expression: </h6>
-            <span className={`spdx-picker-expression-version ${isValid ? 'is-valisdsdsddd' : 'is-not-valid'}`}>
+            <span className={`spdx-picker-expression-version ${isValid ? 'is-valid' : 'is-not-valid'}`}>
               {licenseExpression}
             </span>
             <CloseIcon className="close-modal" onClick={onClose} />
