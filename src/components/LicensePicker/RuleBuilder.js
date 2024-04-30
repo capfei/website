@@ -59,7 +59,7 @@ export default class RuleBuilder extends Component {
           {currentPath !== 'right' && !parentRule.hasOwnProperty('left') && !parentRule.hasOwnProperty('right')
             ? this.renderHeaderRow(rule, path, conjunction)
             : null}
-          <Col md={12} className="flex-center">
+          <Col md={12} className="flex-center editable-container">
             <SpdxPicker value={'NOASSERTION'} onChange={value => updateLicense(value, path)} />
             {path.length > 0 && (
               <Button id="removeRule" onClick={() => removeRule(path)}>
