@@ -134,11 +134,18 @@ export function getDefinitionSuggestions(token, prefix) {
 }
 
 export function getSuggestedData(token, entity) {
+  //let path = entity.toPath()
+  // Replace %2F with %252F
+  //path = path.replace(/%2F/g, '%252F')
+  //return get(url(`${SUGGESTIONS}/${EntitySpec.withoutPR(path)}`), token)
   return get(url(`${SUGGESTIONS}/${EntitySpec.withoutPR(entity).toPath()}`), token)
 }
 
 export function previewDefinition(token, entity, curation) {
-  return post(url(`${DEFINITIONS}/${entity.toPath()}`, { preview: true, matchCasing: 'false' }), token, curation)
+  let path = entity.toPath()
+  // Replace %2F with %252F
+  path = path.replace(/%2F/g, '%252F')
+  return post(url(`${DEFINITIONS}/${path}`, { preview: true, matchCasing: 'false' }), token, curation)
 }
 
 export async function getNotices(token, coordinates, renderer, options) {

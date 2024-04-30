@@ -53,6 +53,7 @@ async function handleListResponse(response) {
 // }
 
 export function post(url, token, payload) {
+  url = url.replace(/%2F/g, '%252F')
   return fetch(url, {
     headers: getHeaders(token),
     method: 'POST',
@@ -61,6 +62,8 @@ export function post(url, token, payload) {
 }
 
 export function patch(url, token, payload) {
+  url = url.replace(/%2f/g, '%2F')
+  url = url.replace(/%2F/g, '%252F')
   return fetch(url, {
     headers: getHeaders(token),
     method: 'PATCH',
@@ -77,12 +80,14 @@ export function patch(url, token, payload) {
 // }
 
 export function get(url, token) {
+  url = url.replace(/%2F/g, '%252F')
   return fetch(url, {
     headers: getHeaders(token)
   }).then(handleResponse)
 }
 
 export function getList(url, token) {
+  url = url.replace(/%2F/g, '%252F')
   return fetch(url, {
     headers: getHeaders(token)
   }).then(handleListResponse)
