@@ -77,7 +77,7 @@ export default class RuleBuilder extends Component {
             : null}
           <Col md={12} className="flex-center editable-container">
             <SpdxPicker value={rule.license} onChange={value => updateLicense(value, path)} />
-            {/* rule.license && (
+            { rule.license && (
               <div>
                 <input
                   type="checkbox"
@@ -87,7 +87,7 @@ export default class RuleBuilder extends Component {
                 />
                 Any later version
               </div>
-            )*/}
+            )}
             {path.length > 0 && (
               <Button id="removeRule" onClick={() => removeRule(path)}>
                 <CloseIcon />
