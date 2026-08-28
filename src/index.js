@@ -4,7 +4,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './styles/index.css'
-import "bootstrap/dist/css/bootstrap.min.css";
+// Removed Bootstrap CSS import - bundle size optimization
+// import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/style.css"
 import { unregister } from './registerServiceWorker'
 import { RehydrationProvider } from './components'
