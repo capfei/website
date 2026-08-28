@@ -7,15 +7,11 @@ import logo from '../images/web/logo.svg'
 import { logout, login } from '../actions/sessionActions'
 import { withRouter } from 'react-router-dom'
 import { ROUTE_ROOT } from '../utils/routingConstants'
-import { NavItem } from 'react-bootstrap'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 import { filter, intersection } from 'lodash'
 import Auth from '../utils/auth'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
-import ExitToAppIcon from '@material-ui/icons/ExitToApp'
-import MenuIcon from '@material-ui/icons/Menu'
-import CloseIcon from '@material-ui/icons/Close'
-import { Button } from '@material-ui/core'
+import { Menu, Dropdown, Button, Space, Layout } from 'antd'
+import { LoginOutlined, LogoutOutlined, MenuOutlined, CloseOutlined } from '@ant-design/icons'
 
 class Header extends Component {
   constructor(props) {
@@ -46,9 +42,9 @@ class Header extends Component {
 
   renderDocs() {
     return (
-      <NavItem eventKey={1} onClick={this.gotoDocs}>
+      <Menu.Item key="docs" onClick={this.gotoDocs}>
         Documentation
-      </NavItem>
+      </Menu.Item>
     )
   }
 
@@ -57,18 +53,26 @@ class Header extends Component {
 
     if (session?.isAnonymous && !session?.isFetching)
       return (
-        <NavItem eventKey={1} onClick={this.handleLogin}>
-          <AccountCircleIcon />
-          Login
-        </NavItem>
+        <Space>
+          <Button 
+            type="text" 
+            icon={<LoginOutlined />} 
+            onClick={this.handleLogin}
+          >
+            Login
+          </Button>
+        </Space>
       )
     return (
-      <>
-        <NavItem eventKey={1} onClick={this.doLogout}>
-          <ExitToAppIcon />
+      <Space>
+        <Button 
+          type="text" 
+          icon={<LogoutOutlined />} 
+          onClick={this.doLogout}
+        >
           Logout
-        </NavItem>
-      </>
+        </Button>
+      </Space>
     )
   }
 
@@ -79,9 +83,9 @@ class Header extends Component {
     return filter(navigation, filterExpr).map((navItem, i) => {
       return (
         <IndexLinkContainer active={navItem.isSelected} activeClassName="active" to={navItem.to} key={i}>
-          <NavItem role="button" onClick={() => (navItem.customUrl ? this.gotoDocs() : null)}>
+          <Menu.Item role="button" onClick={() => (navItem.customUrl ? this.gotoDocs() : null)}>
             {navItem.title}
-          </NavItem>
+          </Menu.Item>
         </IndexLinkContainer>
       )
     })
@@ -111,58 +115,37 @@ class Header extends Component {
   render() {
     const { session, navigation } = this.props
     return (
-      <header className="app-header w-100">
-        <div className="top-header">
-          <div className="container">
-            <div className="d-flex justify-content-end align-items-center">
-              <nav className="top-nav px-2 d-flex justify-content-center align-items-center">
-                <ul role="group">
-                  <NavItem href="https://docs.clearlydefined.io/docs/get-involved/intro">Get Involved</NavItem>
-                  {this.renderLogin()}
-                </ul>
-              </nav>
-            </div>
+      <Layout>
+        <Layout.Header className="clearly-header-nav">
+          <div className="clearly-logo">
+            <LinkContainer to={ROUTE_ROOT}>
+              <a href="#" onClick={e => e.preventDefault()}>
+                <img src={logo} alt="ClearlyDefined" />
+              </a>
+            </LinkContainer>
           </div>
-        </div>
-        <div className="nav-bar-wrapper w-100">
-          <div className="container">
-            <div className="d-flex py-4 px-2 justify-content-between align-items-center">
-              <div className="clearly-logo">
-                <LinkContainer to={ROUTE_ROOT}>
-                  <img src={logo} alt="ClearlyDefine" />
-                </LinkContainer>
-              </div>
-              <nav className="clearly-nav d-flex justify-content-end align-items-center">
-                {this.state.menuOpen && (
-                  <ul role="group">
-                    {/* {this.renderDocs()} */}
-                    {/* {this.renderLogin()} */}
-                    {this.renderNavigation(navigation, session?.isAnonymous)}
-                  </ul>
-                )}
-
-                <Button
-                  variant="outlined"
-                  classes={{ root: 'menu-btn' }}
-                  className="d-md-none d-block"
-                  onClick={() => this.setState({ menuOpen: !this.state.menuOpen })}
-                >
-                  {this.state.menuOpen ? <CloseIcon /> : <MenuIcon />}
-                </Button>
-              </nav>
-            </div>
+          <div className="clearly-nav-menu">
+            <Menu mode="horizontal">
+              {this.renderNavigation(navigation, session?.isAnonymous)}
+              {this.renderDocs()}
+            </Menu>
           </div>
-        </div>
-      </header>
+          <div className="clearly-header-actions">
+            {this.renderLogin()}
+          </div>
+        </Layout.Header>
+      </Layout>
     )
   }
 }
 
 function mapStateToProps(state) {
   return {
-    navigation: state.navigation,
     session: state.session,
-    ui: state.ui.header
+    navigation: state.navigation.map(navItem => ({
+      ...navItem,
+      isSelected: state.navigation.findIndex(n => n.title === navItem.title) === state.navigation.indexOf(navItem)
+    }))
   }
 }
 
