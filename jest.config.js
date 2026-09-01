@@ -1,5 +1,6 @@
 module.exports = {
   verbose: true,
+  testEnvironment: 'jsdom',
   moduleFileExtensions: ['js', 'jsx', 'json'],
   moduleDirectories: ['node_modules'],
   moduleNameMapper: {

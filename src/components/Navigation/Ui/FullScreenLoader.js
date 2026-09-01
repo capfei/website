@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { Spin, Icon } from 'antd'
+//import { Spin, Icon } from 'antd'
+import { Spin } from 'antd'
+import Icon from '@ant-design/icons';
 import { connect } from 'react-redux'
 import { getLoadingStatus } from '../../../reducers/loaderReducer'
 

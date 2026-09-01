@@ -5,7 +5,7 @@ import EntitySpec from '../../../utils/entitySpec'
 import techIcon from '../../../images/icons/tech.svg'
 import shareIcon from '../../../images/icons/share.svg'
 import linkCopyIcon from '../../../images/icons/linkCopy.svg'
-import { IconButton } from '@material-ui/core'
+import IconButton from '@material-ui/core/IconButton/IconButton'
 
 class ComponentDetailsButtons extends Component {
   constructor(props) {

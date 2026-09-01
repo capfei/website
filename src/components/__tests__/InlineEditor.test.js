@@ -2,7 +2,7 @@ import React from 'react'
 import { render } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
+import { thunk } from 'redux-thunk'
 import InlineEditor from '../InlineEditor'
 
 const middlewares = [thunk]
@@ -29,7 +29,7 @@ describe('InlineEditor', () => {
 
     render(
       <Provider store={store}>
-        <InlineEditor onChange={() => {}} placeholder={'test'} type={'text'} field={'licensed.declared'} />
+        <InlineEditor onChange={() => { }} placeholder={'test'} type={'text'} field={'licensed.declared'} />
       </Provider>
     )
   })

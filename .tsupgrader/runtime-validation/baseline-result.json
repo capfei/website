@@ -1,0 +1,13 @@
+{
+  "planHash": "b002e901aedd65d2f153118daa4ffa12e839751f462b0aae3f0fa9eb69580c9f",
+  "phase": "baseline",
+  "recordedAtUtc": "2026-09-01T16:25:06.9960991Z",
+  "retryCount": 0,
+  "resetBaseline": false,
+  "result": {
+    "setupSucceeded": false,
+    "setupDurationMs": 3390,
+    "setupFailureOutput": "setup step 0 \u0027npm\u0027 failed (exit=1, timedOut=False)\nnpm error code ERESOLVE\nnpm error ERESOLVE could not resolve\nnpm error\nnpm error While resolving: react-ga@2.7.0\nnpm error Found: react@18.3.1\nnpm error node_modules/react\nnpm error   react@\u0022^18.3.1\u0022 from the root project\nnpm error   peer react@\u0022\u003E=16.0.0\u0022 from @ant-design/icons@5.6.1\nnpm error   node_modules/@ant-design/icons\nnpm error     @ant-design/icons@\u0022^5.3.0\u0022 from the root project\nnpm error   86 more (@ant-design/react-slick, @emotion/react, ...)\nnpm error\nnpm error Could not resolve dependency:\nnpm error peer react@\u0022^15.6.2 || ^16.0\u0022 from react-ga@2.7.0\nnpm error node_modules/react-ga\nnpm error   react-ga@\u0022^2.3.0\u0022 from the root project\nnpm error\nnpm error Conflicting peer dependency: react@16.14.0\nnpm error node_modules/react\nnpm error   peer react@\u0022^15.6.2 || ^16.0\u0022 from react-ga@2.7.0\nnpm error   node_modules/react-ga\nnpm error     react-ga@\u0022^2.3.0\u0022 from the root project\nnpm error\nnpm error Fix the upstream dependency conflict, or retry\nnpm error this command with --force or --legacy-peer-deps\nnpm error to accept an incorrect (and potentially broken) dependency resolution.\nnpm error\nnpm error\nnpm error For a full report see:\nnpm error /home/codespace/.npm/_logs/2026-09-01T16_25_03_692Z-eresolve-report.txt\nnpm error A complete log of this run can be found in: /home/codespace/.npm/_logs/2026-09-01T16_25_03_692Z-debug-0.log\n",
+    "assertions": []
+  }
+}

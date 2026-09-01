@@ -2,22 +2,25 @@
 // SPDX-License-Identifier: MIT
 
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import './styles/index.css'
 // Removed Bootstrap CSS import - bundle size optimization
 // import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles/style.css"
+import './styles/style.css'
 import { unregister } from './registerServiceWorker'
 import { RehydrationProvider } from './components'
 import ReactGA from 'react-ga'
 if (process.env.NODE_ENV === 'production') {
-    ReactGA.initialize(process.env['REACT_APP_GA_TRACKINGID'])
-    ReactGA.pageview(window.location.pathname + window.location.search)
+  ReactGA.initialize(process.env['REACT_APP_GA_TRACKINGID'])
+  ReactGA.pageview(window.location.pathname + window.location.search)
 }
 
 if (!Array.prototype.includes)
-    alert(
-        'You need a browser that supports modern JavaScript features to view this site. Please switch to another browser.'
-    )
-ReactDOM.render(< RehydrationProvider />, document.getElementById('root'))
+  alert(
+    'You need a browser that supports modern JavaScript features to view this site. Please switch to another browser.'
+  )
+
+const container = document.getElementById('root')
+const root = createRoot(container)
+root.render(<RehydrationProvider />)
 unregister()

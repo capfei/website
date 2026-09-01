@@ -8,9 +8,11 @@ import { withResize } from '../../../utils/WindowProvider'
 import Definition from '../../../utils/definition'
 import { ORIGINS } from '../../../api/clearlyDefined'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
-import { IconButton } from '@material-ui/core'
+import IconButton from '@material-ui/core/IconButton/IconButton'
 import ButtonWithTooltip from './ButtonWithTooltip'
-import { Menu, Dropdown, Icon } from 'antd'
+//import { Menu, Dropdown, Icon } from 'antd'
+import { Menu, Dropdown } from 'antd'
+import Icon from '@ant-design/icons';
 
 class ComponentButtons extends Component {
   constructor(props) {
@@ -152,7 +154,7 @@ class ComponentButtons extends Component {
             )}
             {!isDefinitionEmpty && onInspect && (
               <ButtonWithTooltip tip="Dig into this definition">
-              <Button className="list-fa-button" onClick={this.inspectComponent.bind(this, currentComponent, definition)}>
+                <Button className="list-fa-button" onClick={this.inspectComponent.bind(this, currentComponent, definition)}>
                   <i className="fas fa-search" />
                 </Button>
               </ButtonWithTooltip>

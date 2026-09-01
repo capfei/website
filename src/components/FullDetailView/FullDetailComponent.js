@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import React, { Component } from 'react'
-import { Button } from '@material-ui/core'
+import Button from '@material-ui/core/Button/Button'
 import PropTypes from 'prop-types'
 import cloneDeep from 'lodash/cloneDeep'
 import get from 'lodash/get'
@@ -17,7 +17,9 @@ import ComponentDetailsButtons from '.././Navigation/Ui/ComponentDetailsButtons'
 import noteIcon from '../../images/icons/notes.svg'
 import folderIcon from '../../images/icons/folderIcon.png'
 import codeIcon from '../../images/icons/codeIcon.svg'
-import { Paper, Typography, Divider } from '@material-ui/core'
+import Paper from '@material-ui/core/Paper/Paper'
+import Typography from '@material-ui/core/Typography/Typography'
+import Divider from '@material-ui/core/Divider/Divider'
 import ScoreRenderer from '.././Navigation/Ui/ScoreRenderer'
 import downloadIcon from '../../images/icons/downloadIcon.svg'
 class FullDetailComponent extends Component {

@@ -2,7 +2,7 @@ import React from 'react'
 import { render } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
+import { thunk } from 'redux-thunk'
 import { WindowProvider } from '../../../../utils/WindowProvider'
 import ConnectedDropComponent, { DropComponent } from '../DropComponent'
 

@@ -3,11 +3,13 @@
 
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Table, Input, Button, Icon, Checkbox } from 'antd'
-import { Paper } from '@material-ui/core'
+import Icon from '@ant-design/icons';
+//import { Table, Input, Button, Icon, Checkbox } from 'antd'
+import { Table, Input, Button, Checkbox } from 'antd'
+import Paper from '@material-ui/core/Paper/Paper'
 import get from 'lodash/get'
 import isArray from 'lodash/isArray'
-import FacetsDropdown from '../../components/FacetsDropdown'
+import FacetsDropdown from '../FacetsDropdown'
 import Contribution from '../../utils/contribution'
 import FileListSpec from '../../utils/filelist'
 import Attachments from '../../utils/attachments'
@@ -285,9 +287,8 @@ export default class FileList extends PureComponent {
         {breadcrumbs.map((item, index) => {
           return (
             <div
-              className={`${
-                breadcrumbs.length - 1 === index ? 'breadcrumb-item breadcrumb-last-item' : 'breadcrumb-item'
-              }`}
+              className={`${breadcrumbs.length - 1 === index ? 'breadcrumb-item breadcrumb-last-item' : 'breadcrumb-item'
+                }`}
               key={index}
               onClick={e => this.onBreadcrumbSelect(item, index)}
             >
