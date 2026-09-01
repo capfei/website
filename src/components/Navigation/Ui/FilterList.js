@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import find from 'lodash/find'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import Button from '@mui/material/Button/Button'
+import Button from '@mui/material/Button'
 
 class FilterList extends Component {
   constructor(props) {
