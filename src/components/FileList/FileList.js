@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 import Icon from '@ant-design/icons';
 //import { Table, Input, Button, Icon, Checkbox } from 'antd'
 import { Table, Input, Button, Checkbox } from 'antd'
-import Paper from '@material-ui/core/Paper/Paper'
+import Paper from '@mui/material/Paper'
 import get from 'lodash/get'
 import isArray from 'lodash/isArray'
 import FacetsDropdown from '../FacetsDropdown'
@@ -17,7 +17,7 @@ import ModalEditor from '../ModalEditor'
 import EnhancedLicensePicker from '../../utils/EnhancedLicensePicker'
 import folderIcon from '../../images/icons/folder.svg'
 import fileIcon from '../../images/icons/file.svg'
-import FolderOpenIcon from '@material-ui/icons/FolderOpen'
+import FolderOpenIcon from '@mui/icons-material/FolderOpen'
 export default class FileList extends PureComponent {
   static propTypes = {
     onChange: PropTypes.func,

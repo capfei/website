@@ -4,13 +4,16 @@
     "browser": true,
     "jest": true
   },
-  "parser": "babel-eslint",
+  //"parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "extends": "prettier",
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 6
   },
-  "plugins": ["prettier"],
+  "plugins": [
+    "prettier"
+  ],
   "rules": {
     "prettier/prettier": "error",
     "no-console": 1

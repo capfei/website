@@ -7,7 +7,7 @@ import LabelRenderer from './LabelRenderer'
 import { InlineEditor, ModalEditor } from '../..'
 import Contribution from '../../../utils/contribution'
 import ListDataRenderer from '../Ui/ListDataRenderer'
-import Divider from '@material-ui/core/Divider/Divider'
+import Divider from '@mui/material/Divider'
 import carrortDown from '../../../images/icons/carrortDown.svg'
 class EditableFieldRenderer extends Component {
   static propTypes = {

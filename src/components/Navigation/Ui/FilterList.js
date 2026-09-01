@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import find from 'lodash/find'
-import Menu from '@material-ui/core/Menu/Menu'
-import MenuItem from '@material-ui/core/MenuItem/MenuItem'
-import Button from '@material-ui/core/Button/Button'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import Button from '@mui/material/Button/Button'
 
 class FilterList extends Component {
   constructor(props) {

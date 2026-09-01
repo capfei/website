@@ -7,7 +7,7 @@ import toPath from 'lodash/toPath'
 import { Button, Row, Col } from 'react-bootstrap'
 import RuleBuilder from './RuleBuilder'
 import LicensePickerUtils from './utils'
-import CloseIcon from '@material-ui/icons/Close'
+import CloseIcon from '@mui/icons-material/Close'
 import './style.css'
 /**
  * A standalone SPDX License Picker

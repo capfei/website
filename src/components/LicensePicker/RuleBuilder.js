@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { ToggleButtonGroup, ToggleButton, Button, Row, Col } from 'react-bootstrap'
 import SpdxPicker from '../SpdxPicker'
-import CloseIcon from '@material-ui/icons/Close'
+import CloseIcon from '@mui/icons-material/Close'
 
 export default class RuleBuilder extends Component {
   static propTypes = {
