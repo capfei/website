@@ -20,26 +20,34 @@ export default class InfiniteList extends React.Component {
   }
 
   static defaultProps = {
-    loadMoreRows: () => {}
+    loadMoreRows: () => { }
   }
 
   constructor(props) {
     super(props)
-    this.state = {}
+    this.list = null
+    this.registerChild = null
+    this.setListRef = this.setListRef.bind(this)
+  }
+
+  // Stable ref callback so React doesn't detach/re-attach on every render
+  setListRef(element) {
+    this.list = element
+    if (this.registerChild) {
+      this.registerChild(element)
+    }
   }
 
   componentDidUpdate(prevProps) {
-    // aggressively recompute heights if the deeper content has changes. Never know if heights will be affected.
-    const changed = this.props.contentSeq !== prevProps.contentSeq
-    if (!changed || !this.state.list) return
-    this.state.list.recomputeRowHeights(0)
-  }
-
-  // hook the List ref so we can trigger recompute when expand happens.
-  hookRef(ref) {
-    return (element, ...args) => {
-      if (!element) return ref(element, ...args)
-      if (this.state.list !== element) this.setState({ ...this.state, list: element })
+    const { contentSeq } = this.props
+    // Recompute heights only when contentSeq actually changes
+    if (contentSeq !== undefined && contentSeq !== prevProps.contentSeq && this.list) {
+      // Defer execution to the next tick to prevent synchronous forceUpdate loops in React
+      setTimeout(() => {
+        if (this.list) {
+          this.list.recomputeRowHeights(0)
+        }
+      }, 0)
     }
   }
 
@@ -54,26 +62,29 @@ export default class InfiniteList extends React.Component {
         rowCount={totalRows()}
         threshold={threshold}
       >
-        {({ onRowsRendered, registerChild }) => (
-          <AutoSizer>
-            {({ width, height }) => (
-              <List
-                aria-checked="false"
-                ref={this.hookRef(registerChild)}
-                className={`${customClassName}`}
-                height={totalRows() === 0 ? noRowsHeight : height}
-                onRowsRendered={onRowsRendered}
-                noRowsRenderer={noRowsRenderer}
-                rowCount={currentRows()}
-                rowHeight={rowHeight}
-                rowRenderer={rowRenderer}
-                width={width}
-                sortOrder={sortOrder}
-                contentSeq={contentSeq}
-              />
-            )}
-          </AutoSizer>
-        )}
+        {({ onRowsRendered, registerChild }) => {
+          this.registerChild = registerChild
+          return (
+            <AutoSizer>
+              {({ width, height }) => (
+                <List
+                  aria-checked="false"
+                  ref={this.setListRef}
+                  className={`${customClassName}`}
+                  height={totalRows() === 0 ? noRowsHeight : height}
+                  onRowsRendered={onRowsRendered}
+                  noRowsRenderer={noRowsRenderer}
+                  rowCount={currentRows()}
+                  rowHeight={rowHeight}
+                  rowRenderer={rowRenderer}
+                  width={width}
+                  sortOrder={sortOrder}
+                  contentSeq={contentSeq}
+                />
+              )}
+            </AutoSizer>
+          )
+        }}
       </InfiniteLoader>
     )
   }

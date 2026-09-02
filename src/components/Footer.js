@@ -32,9 +32,9 @@ export default class Footer extends Component {
           <div className="row justify-content-between align-items-center footer-row">
             <SocialIcons className="clearly-footer-socials pb-2" entity={socials} />
             <div className="col-md-8">
-              <p class="mb-0">
-                ClearlyDefined is an 
-                <a href="https://opensource.org" className="mx-1 highlighted-link-blue">OSI</a> project 
+              <p className="mb-0">
+                ClearlyDefined is an
+                <a href="https://opensource.org" className="mx-1 highlighted-link-blue">OSI</a> project
                 maintained by a growing community.
               </p>
             </div>

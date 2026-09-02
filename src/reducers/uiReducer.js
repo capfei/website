@@ -59,11 +59,11 @@ const contribution = combineReducers({
 
 const inspect = combineReducers({
   filter: valueReducer(UI_INSPECT_UPDATE_FILTER),
-  definition: itemReducer(UI_INSPECT_GET_DEFINITION, item => yaml.safeDump(item, { sortKeys: true })),
-  curations: itemReducer(UI_INSPECT_GET_CURATIONS, item => yaml.safeDump(item, { sortKeys: true })),
+  definition: itemReducer(UI_INSPECT_GET_DEFINITION, item => yaml.dump(item, { sortKeys: true })),
+  curations: itemReducer(UI_INSPECT_GET_CURATIONS, item => yaml.dump(item, { sortKeys: true })),
   harvested: itemReducer(UI_INSPECT_GET_HARVESTED, item => JSON.stringify(item, null, 2)),
-  curationList: itemReducer(UI_GET_CURATIONS_LIST, item => yaml.safeDump(item, { sortKeys: true })),
-  inspectedCuration: itemReducer(UI_GET_CURATION_DATA, item => yaml.safeDump(item, { sortKeys: true }))
+  curationList: itemReducer(UI_GET_CURATIONS_LIST, item => yaml.dump(item, { sortKeys: true })),
+  inspectedCuration: itemReducer(UI_GET_CURATION_DATA, item => yaml.dump(item, { sortKeys: true }))
 })
 
 const definitions = combineReducers({

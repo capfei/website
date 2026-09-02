@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import React from 'react'
+//import ReactDOM from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import './styles/index.css'
 // Removed Bootstrap CSS import - bundle size optimization
@@ -16,6 +17,10 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 if (!Array.prototype.includes)
+  //  alert(
+  //    'You need a browser that supports modern JavaScript features to view this site. Please switch to another browser.'
+  //  )
+  //ReactDOM.render(< RehydrationProvider />, document.getElementById('root'))
   alert(
     'You need a browser that supports modern JavaScript features to view this site. Please switch to another browser.'
   )

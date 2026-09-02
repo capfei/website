@@ -7,6 +7,13 @@ import 'react-bootstrap-typeahead/css/Typeahead.css'
 
 export default class Autocomplete extends Component {
   render() {
+    const { defaultInputValue, selected, ...restProps } = this.props
+
+    // Omit defaultInputValue if selected is provided to prevent typeahead override warning
+    const typeaheadProps = selected
+      ? { selected, ...restProps }
+      : { defaultInputValue, ...restProps }
+
     return (
       <Typeahead
         inputProps={{
@@ -15,7 +22,7 @@ export default class Autocomplete extends Component {
         }}
         id="given-name"
         ref={typeahead => (this.typeahead = typeahead)}
-        {...this.props}
+        {...typeaheadProps}
       />
     )
   }

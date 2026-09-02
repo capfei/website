@@ -4,8 +4,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { TwoLineEntry, QuickEditModel, FileCountRenderer } from './'
-import { Checkbox, OverlayTrigger, Tooltip, Popover } from 'react-bootstrap'
-import { Tag } from 'antd'
+import { Checkbox } from 'react-bootstrap'
+import { Tag, Tooltip, Popover } from 'antd'
 import { get, isEqual, union } from 'lodash'
 import git from '../images/Git-Logo-2Color.png'
 import npm from '../images/n-large.png'
@@ -123,16 +123,12 @@ class DefinitionEntry extends React.Component {
   }
 
   renderWithToolTipIfDifferent(field, content, placement = 'right', transform = x => x) {
-    const toolTip = (
-      <Tooltip id={`tooltip-${field}`} className="definition__tooltip">
-        Original: {transform(this.getOriginalValue(field))}
-      </Tooltip>
-    )
+    const title = `Original: ${transform(this.getOriginalValue(field))}`
     return this.ifDifferent(
       field,
-      <OverlayTrigger placement={placement} overlay={toolTip}>
+      <Tooltip placement={placement} title={title} overlayClassName="definition__tooltip">
         <span className="definition__overlay-hover-catcher">{content}</span>
-      </OverlayTrigger>,
+      </Tooltip>,
       content
     )
   }
@@ -229,19 +225,6 @@ class DefinitionEntry extends React.Component {
           <span className="panel-details__title">{this.renderLabel('Declared')}:</span>
           <div className="panel-details__value">
             {this.renderFieldWithToolTipIfDifferent('licensed.declared')}
-            {/* {this.renderWithToolTipIfDifferent(
-              'licensed.declared',
-              <LicensesRenderer
-                definition={definition}
-                field={'licensed.declared'}
-                readOnly={readOnly}
-                initialValue={this.getOriginalValue('licensed.declared')}
-                value={this.getValue('licensed.declared')}
-                onChange={this.fieldChange('licensed.declared')}
-                revertable
-                onRevert={() => onRevert('licensed.declared')}
-              />
-            )} */}
           </div>
         </div>
         <div className="col-md-6 d-flex justify-content-start align-items-center">
@@ -254,25 +237,6 @@ class DefinitionEntry extends React.Component {
           <span className="panel-details__title">{this.renderLabel('Source')}:</span>
           <div className="panel-details__value">
             {this.renderFieldWithToolTipIfDifferent('described.sourceLocation', a => Contribution.printCoordinates(a))}
-            {/* {this.renderWithToolTipIfDifferent(
-              'described.sourceLocation',
-              <ModalEditor
-                definition={definition}
-                field={'described.sourceLocation'}
-                extraClass={this.classIfDifferent('described.sourceLocation')}
-                readOnly={readOnly}
-                initialValue={Contribution.printCoordinates(this.getOriginalValue('described.sourceLocation'))}
-                value={Contribution.printCoordinates(this.getValue('described.sourceLocation'))}
-                onChange={this.fieldChange('described.sourceLocation', isEqual, Contribution.toSourceLocation)}
-                editor={SourcePicker}
-                validator={value => true}
-                placeholder={'Source location'}
-                revertable
-                onRevert={() => onRevert('described.sourceLocation')}
-              />,
-              'right',
-              Contribution.printCoordinates
-            )} */}
           </div>
         </div>
         <div className="col-md-6 d-flex justify-content-start align-items-center">
@@ -288,22 +252,6 @@ class DefinitionEntry extends React.Component {
               'described.releaseDate',
               a => Contribution.printDate(a) || '-- -- --'
             )}
-            {/* {this.renderWithToolTipIfDifferent(
-              'described.releaseDate',
-              <InlineEditor
-                field={'described.releaseDate'}
-                extraClass={this.classIfDifferent('described.releaseDate')}
-                readOnly={readOnly}
-                type="date"
-                initialValue={Contribution.printDate(this.getOriginalValue('described.releaseDate'))}
-                value={Contribution.printDate(this.getValue('described.releaseDate'))}
-                onChange={this.fieldChange('described.releaseDate')}
-                validator={value => true}
-                placeholder={'YYYY-MM-DD'}
-                revertable
-                onRevert={() => onRevert('described.releaseDate')}
-              />
-            )} */}
           </div>
         </div>
         <div className="col-md-6 d-flex justify-content-start align-items-center">
@@ -328,125 +276,31 @@ class DefinitionEntry extends React.Component {
           </button>
         </div>
       </div>
-      // <Row>
-      //   <Col sm={5}>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Declared')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         {this.renderWithToolTipIfDifferent(
-      //           'licensed.declared',
-      //           <LicensesRenderer
-      //             definition={definition}
-      //             field={'licensed.declared'}
-      //             readOnly={readOnly}
-      //             initialValue={this.getOriginalValue('licensed.declared')}
-      //             value={this.getValue('licensed.declared')}
-      //             onChange={this.fieldChange('licensed.declared')}
-      //             revertable
-      //             onRevert={() => onRevert('licensed.declared')}
-      //           />
-      //         )}
-      //       </Col>
-      //     </Row>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Source')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         {this.renderWithToolTipIfDifferent(
-      //           'described.sourceLocation',
-      //           <ModalEditor
-      //             definition={definition}
-      //             field={'described.sourceLocation'}
-      //             extraClass={this.classIfDifferent('described.sourceLocation')}
-      //             readOnly={readOnly}
-      //             initialValue={Contribution.printCoordinates(this.getOriginalValue('described.sourceLocation'))}
-      //             value={Contribution.printCoordinates(this.getValue('described.sourceLocation'))}
-      //             onChange={this.fieldChange('described.sourceLocation', isEqual, Contribution.toSourceLocation)}
-      //             editor={SourcePicker}
-      //             validator={value => true}
-      //             placeholder={'Source location'}
-      //             revertable
-      //             onRevert={() => onRevert('described.sourceLocation')}
-      //           />,
-      //           'right',
-      //           Contribution.printCoordinates
-      //         )}
-      //       </Col>
-      //     </Row>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Release')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         {this.renderWithToolTipIfDifferent(
-      //           'described.releaseDate',
-      //           <InlineEditor
-      //             field={'described.releaseDate'}
-      //             extraClass={this.classIfDifferent('described.releaseDate')}
-      //             readOnly={readOnly}
-      //             type="date"
-      //             initialValue={Contribution.printDate(this.getOriginalValue('described.releaseDate'))}
-      //             value={Contribution.printDate(this.getValue('described.releaseDate'))}
-      //             onChange={this.fieldChange('described.releaseDate')}
-      //             validator={value => true}
-      //             placeholder={'YYYY-MM-DD'}
-      //             revertable
-      //             onRevert={() => onRevert('described.releaseDate')}
-      //           />
-      //         )}
-      //       </Col>
-      //     </Row>
-      //   </Col>
-      //   <Col sm={7}>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Discovered')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         {this.renderPopover(licensed, 'discovered.expressions', 'Discovered')}
-      //       </Col>
-      //     </Row>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Attribution')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         {this.renderPopover(licensed, 'attribution.parties', 'Attributions')}
-      //       </Col>
-      //     </Row>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Files')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         <FileCountRenderer definition={definition} />
-      //       </Col>
-      //     </Row>
-      //   </Col>
-      // </Row>
     )
   }
 
   renderPopover(licensed, key, title) {
     const values = get(licensed, key, [])
-    // compare facets without folding
     if (key === 'attribution.parties') key = 'licensed.facets'
     const classIfDifferent = this.classIfDifferent(key)
     if (!values) return null
 
-    return (
-      <OverlayTrigger
-        trigger="click"
-        placement="left"
-        animation={false}
-        rootClose
-        overlay={
-          <Popover title={title} id={title}>
-            <div className="popoverRenderer popoverRenderer_scrollY">
-              {values.map((a, index) => (
-                <div key={`${a}_${index}`} className="popoverRenderer__items">
-                  <div className="popoverRenderer__items__value">
-                    <span>{a}</span>
-                  </div>
-                </div>
-              ))}
+    const popoverContent = (
+      <div className="popoverRenderer popoverRenderer_scrollY">
+        {values.map((a, index) => (
+          <div key={`${a}_${index}`} className="popoverRenderer__items">
+            <div className="popoverRenderer__items__value">
+              <span>{a}</span>
             </div>
-          </Popover>
-        }
-      >
+          </div>
+        ))}
+      </div>
+    )
+
+    return (
+      <Popover title={title} content={popoverContent} trigger="click" placement="left">
         <span className={`popoverSpan ${classIfDifferent}`}>{values.join(', ')}</span>
-      </OverlayTrigger>
+      </Popover>
     )
   }
 

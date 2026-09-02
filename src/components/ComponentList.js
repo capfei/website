@@ -3,7 +3,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import isEqual from 'lodash/isEqual'
+import get from 'lodash/get'
 import FormGroup from 'react-bootstrap/lib/FormGroup'
 import { RowEntityList, DefinitionEntry } from './'
 import EntitySpec from '../utils/entitySpec'
@@ -31,7 +31,10 @@ class ComponentList extends React.Component {
   }
 
   static defaultProps = {
-    selected: {}
+    selected: {},
+    definitions: { entries: {} },
+    curations: { entries: {} },
+    list: []
   }
 
   constructor(props) {
@@ -43,19 +46,14 @@ class ComponentList extends React.Component {
     this.getDefinition = this.getDefinition.bind(this)
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.definitions.sequence !== prevProps.definitions.sequence) this.incrementSequence()
-    if (this.props.curations.sequence !== prevProps.curations.sequence) this.incrementSequence()
-    if (this.props.sequence !== prevProps.sequence) this.incrementSequence()
-    if (!isEqual(this.props.list, prevProps.list)) this.incrementSequence()
-  }
-
   getDefinition(component) {
-    return this.props.definitions.entries[EntitySpec.fromObject(component).toPath()]
+    const path = EntitySpec.fromObject(component).toPath()
+    return get(this.props, `definitions.entries[${path}]`)
   }
 
   getCuration(component) {
-    return this.props.curations.entries[EntitySpec.fromObject(component).toPath()]
+    const path = EntitySpec.fromObject(component).toPath()
+    return get(this.props, `curations.entries[${path}]`)
   }
 
   revertComponent(component, param) {
@@ -71,11 +69,11 @@ class ComponentList extends React.Component {
   }
 
   incrementSequence() {
-    this.setState({ ...this.state, contentSeq: this.state.contentSeq + 1 })
+    this.setState(prevState => ({ contentSeq: prevState.contentSeq + 1 }))
   }
 
   rowHeight({ index }) {
-    const component = this.props.list[index]
+    const component = get(this.props, `list[${index}]`)
     return component && component.expanded ? 250 * this.props.isMobileMultiplier : 83
   }
 
@@ -99,19 +97,14 @@ class ComponentList extends React.Component {
       hideRemoveButton
     } = this.props
 
-    const component = list[index]
-    if (!component) return
+    const component = list ? list[index] : null
+    if (!component) return null
     const definition = this.getDefinition(component) || { coordinates: component }
     let curation = this.getCuration(component)
     curation = curation || { contributions: [], curations: {} }
     return (
       <div key={key} className="component-row" style={style}>
         <DefinitionEntry
-          // multiSelectEnabled={multiSelectEnabled}
-          // onSelectAll={onSelectAll}
-          // isSelected={selected[index] || false}
-          // toggleCheckbox={multiSelectEnabled && toggleCheckbox.bind(this, index)}
-          // draggable
           readOnly={readOnly}
           onClick={() => this.toggleExpanded(component)}
           curation={curation}
@@ -143,9 +136,17 @@ class ComponentList extends React.Component {
   }
 
   render() {
-    const { loadMoreRows, noRowsRenderer, list, listLength } = this.props
-    const { sortOrder, contentSeq } = this.state
+    const { loadMoreRows, noRowsRenderer, list, listLength, sequence, definitions, curations } = this.props
+    const { sortOrder, contentSeq: stateSeq } = this.state
     const showFilterBar = false
+
+    // Derive total sequence dynamically to avoid setting state in componentDidUpdate
+    const computedContentSeq =
+      (get(definitions, 'sequence') || 0) +
+      (get(curations, 'sequence') || 0) +
+      (sequence || 0) +
+      stateSeq
+
     return (
       <div className={`clearly-table-body flex-grow ${showFilterBar ? 'show-filter' : ''}`}>
         <div className="clearly-header">
@@ -170,7 +171,7 @@ class ComponentList extends React.Component {
             rowHeight={this.rowHeight}
             noRowsRenderer={noRowsRenderer}
             sortOrder={sortOrder}
-            contentSeq={contentSeq}
+            contentSeq={computedContentSeq}
             customClassName={'components-list'}
           />
         </FormGroup>

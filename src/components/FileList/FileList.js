@@ -413,7 +413,7 @@ export default class FileList extends PureComponent {
     ]
 
     return (
-      <div className="diractry-viewer">
+      <div className="directory-viewer">
         {this.renderBreadcrumbs()}
         <Paper className="w-100 rounded">
           <Table
