@@ -11,9 +11,10 @@ export default function(state = initialState, action) {
     case 'UI_INSPECT_GET_CURATIONS':
     case 'UI_INSPECT_GET_DEFINITION':
     case 'UI_INSPECT_GET_HARVESTED':
-      let isLoading = state.isLoading
-      if (!get(action, 'error') && !get(action, 'result')) isLoading++
-      else isLoading--
+      const isStart = !get(action, 'error') && !get(action, 'result')
+      // Clamp at zero: an unbalanced completion (a request that errors before it is counted,
+      // or a component that unmounts mid-flight) would otherwise leave the overlay stuck on.
+      const isLoading = Math.max(0, isStart ? state.isLoading + 1 : state.isLoading - 1)
       return { ...state, isLoading }
     default:
       return state

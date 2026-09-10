@@ -14,3 +14,7 @@ export const ROUTE_GETINVOLED = '/get-involved'
 export const ROUTE_CHARTER = '/charter'
 export const ROUTE_FILE = '/file'
 export const ROUTE_ROOT = '/'
+
+// PUBLIC_URL is empty at the site root and set to the sub-path (e.g. /website) when the app is
+// deployed to a GitHub Pages project page. Absolute links must include it or they 404.
+export const siteUrl = path => `${window.location.origin}${process.env.PUBLIC_URL || ''}${path}`

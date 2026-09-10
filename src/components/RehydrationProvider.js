@@ -22,7 +22,7 @@ import {
 import history from '../config/history'
 import { configureStore } from '../configureStore'
 import { Provider } from 'react-redux'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
 import { App } from './'
 import { omit } from 'lodash'
 import withTracker from '../utils/withTracker'
@@ -112,7 +112,7 @@ export default class RehydrationDelayedProvider extends Component {
             <Suspense fallback={<div className="loading-site-root">Loading...</div>}>
               <Switch>
                 <Route path={ROUTE_WORKSPACE} component={withTracker(PageDefinitions)} />
-                <Route path={ROUTE_DEFINITIONS} exact={true} component={() => (window.location = ROUTE_WORKSPACE)} />
+                <Route path={ROUTE_DEFINITIONS} exact={true} component={() => <Redirect to={ROUTE_WORKSPACE} />} />
                 <Route path={ROUTE_DEFINITIONS} component={withTracker(FullDetailPage)} />
                 <Route path={ROUTE_SHARE} component={withTracker(PageDefinitions)} />
                 <Route path={ROUTE_CURATIONS} component={withTracker(PageContribution)} />

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import get from 'lodash/get'
-import { ROUTE_DEFINITIONS } from '../../../utils/routingConstants'
+import { ROUTE_DEFINITIONS, siteUrl } from '../../../utils/routingConstants'
 import EntitySpec from '../../../utils/entitySpec'
 import techIcon from '../../../images/icons/tech.svg'
 import shareIcon from '../../../images/icons/share.svg'
@@ -26,7 +26,7 @@ class ComponentDetailsButtons extends Component {
       'coordinates.name'
     )}`
     console.log('pathpathpath', path)
-    window.open(`${window.location.origin}${path}`)
+    window.open(siteUrl(path))
   }
 
   openRelatedComponents = definition => {
@@ -34,12 +34,12 @@ class ComponentDetailsButtons extends Component {
       definition,
       'coordinates.name'
     )}&sortDesc=true&sort=releaseDate`
-    window.open(`${window.location.origin}${path}`)
+    window.open(siteUrl(path))
   }
 
   renderUrl() {
     const { item } = this.props
-    return `${window.location.origin}${ROUTE_DEFINITIONS}/${EntitySpec.fromObject(get(item, 'coordinates')).toPath()}`
+    return siteUrl(`${ROUTE_DEFINITIONS}/${EntitySpec.fromObject(get(item, 'coordinates')).toPath()}`)
   }
 
   copyToClipboard = str => {

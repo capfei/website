@@ -11,6 +11,14 @@ function getHeaders(token) {
   return result
 }
 
+// GET requests have no body, so Content-Type is meaningless on them -- but sending it makes
+// the request non-simple and forces a CORS preflight. The API does not answer OPTIONS on
+// every route, so anonymous reads (e.g. /curations) fail outright when it is set. Only send
+// headers when there is actually something to send.
+function getReadHeaders(token) {
+  return token ? { Authorization: 'Bearer ' + token } : undefined
+}
+
 export function handleResponse(response) {
   // reject if code is out of range 200-299
   if (!response || !response.ok) {
@@ -121,7 +129,7 @@ function fetchWithTimeout(url, options) {
 export function get(url, token) {
   return dedupe(`GET:${token ? 'auth' : 'anon'}:${url}`, () =>
     fetchWithTimeout(url, {
-      headers: getHeaders(token)
+      headers: getReadHeaders(token)
     }).then(handleResponse)
   )
 }
@@ -129,7 +137,7 @@ export function get(url, token) {
 export function getList(url, token) {
   return dedupe(`LIST:${token ? 'auth' : 'anon'}:${url}`, () =>
     fetchWithTimeout(url, {
-      headers: getHeaders(token)
+      headers: getReadHeaders(token)
     }).then(handleListResponse)
   )
 }

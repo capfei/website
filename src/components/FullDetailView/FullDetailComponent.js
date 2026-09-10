@@ -5,6 +5,7 @@ import React, { Component } from 'react'
 import { Button } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import get from 'lodash/get'
+import Spin from 'antd/lib/spin'
 import FileList from '../FileList'
 import Contribution from '../../utils/contribution'
 import DescribedSection from '../Navigation/Sections/DescribedSection'
@@ -191,8 +192,26 @@ class FullDetailComponent extends Component {
   }
 
   render() {
-    const { definition, harvest, curations } = this.props
-    if (!definition || !definition.item || !curations || !harvest) return null
+    const { definition } = this.props
+    // Only the definition is required to draw the page. Curations and harvest data arrive
+    // separately and each section handles its own missing data, so don't block on them.
+    if (!definition || !definition.item) {
+      if (get(definition, 'error'))
+        return (
+          <div className="container py-5 text-center">
+            <Typography variant="h6">This component could not be loaded.</Typography>
+            <Typography variant="body2">
+              The definition service did not return data for these coordinates. Check the URL, or try again in a moment.
+            </Typography>
+          </div>
+        )
+      return (
+        <div className="container py-5 text-center">
+          <Spin size="large" />
+          <Typography variant="body2">Loading component details&hellip;</Typography>
+        </div>
+      )
+    }
     const item = { ...definition.item }
     const image = Contribution.getImage(item)
 

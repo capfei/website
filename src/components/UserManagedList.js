@@ -4,7 +4,7 @@
 import React from 'react'
 import notification from 'antd/lib/notification'
 import { saveAs } from 'file-saver'
-import { ROUTE_SHARE } from '../utils/routingConstants'
+import { ROUTE_SHARE, siteUrl } from '../utils/routingConstants'
 import { getNotices } from '../api/clearlyDefined'
 import { saveGist } from '../api/github'
 import { Button } from 'react-bootstrap'
@@ -142,7 +142,7 @@ export default class UserManagedList extends SystemManagedList {
       if (this.isPackageLock(object)) return this.getListFromPackageLock(object.dependencies)
       if (this.isFossaInput(object)) return this.getListFromFossaPackage(object.Build.Dependencies)
       if (this.isClearlyDefinedList(object)) return object
-    } catch (error) {}
+    } catch (error) { }
     return null
   }
 
@@ -283,7 +283,7 @@ export default class UserManagedList extends SystemManagedList {
       urlShare.isValid()
       const message = urlShare.toMessage()
       const encodedMessage = urlShare.encode(message)
-      const url = `${document.location.origin}${ROUTE_SHARE}/${encodedMessage}`
+      const url = siteUrl(`${ROUTE_SHARE}/${encodedMessage}`)
       this.copyToClipboard(url, 'URL copied to clipboard')
     } catch (e) {
       return false

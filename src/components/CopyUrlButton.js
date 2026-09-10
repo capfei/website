@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import { Button } from 'react-bootstrap'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import ButtonWithTooltip from './Navigation/Ui/ButtonWithTooltip'
+import { siteUrl } from '../utils/routingConstants'
 
 export default class CopyUrlButton extends Component {
   static propTypes = {
@@ -49,7 +50,7 @@ export default class CopyUrlButton extends Component {
 
   renderUrl() {
     const { route, path } = this.props
-    return `${window.location.origin}${route}${path}`
+    return siteUrl(`${route}${path}`)
   }
 
   renderTooltip() {
