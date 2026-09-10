@@ -4,7 +4,6 @@
 import React, { Component } from 'react'
 import { Button } from '@material-ui/core'
 import PropTypes from 'prop-types'
-import cloneDeep from 'lodash/cloneDeep'
 import get from 'lodash/get'
 import FileList from '../FileList'
 import Contribution from '../../utils/contribution'
@@ -38,7 +37,8 @@ class FullDetailComponent extends Component {
     readOnly: PropTypes.bool.isRequired,
     renderContributeButton: PropTypes.element,
     previewDefinition: PropTypes.object,
-    getCurationData: PropTypes.func
+    getCurationData: PropTypes.func,
+    loadHarvestedData: PropTypes.func
   }
 
   globTooptipText() {
@@ -109,7 +109,7 @@ class FullDetailComponent extends Component {
         </div>
 
         <FileList
-          files={cloneDeep(item.files)}
+          files={item.files}
           coordinates={item?.coordinates}
           onChange={onChange}
           component={definition}
@@ -185,6 +185,8 @@ class FullDetailComponent extends Component {
   }
 
   handleTab(num) {
+    // The raw harvest output is large, so it is only requested once the user asks for it.
+    if (num === 2 && this.props.loadHarvestedData) this.props.loadHarvestedData()
     this.setState({ activeTab: num })
   }
 

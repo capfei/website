@@ -4,15 +4,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import logo from '../images/web/logo.svg'
-import { logout, login } from '../actions/sessionActions'
 import { withRouter } from 'react-router-dom'
 import { ROUTE_ROOT } from '../utils/routingConstants'
 import { NavItem } from 'react-bootstrap'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 import { filter, intersection } from 'lodash'
-import Auth from '../utils/auth'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
-import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import MenuIcon from '@material-ui/icons/Menu'
 import CloseIcon from '@material-ui/icons/Close'
 import { Button } from '@material-ui/core'
@@ -20,24 +16,10 @@ import { Button } from '@material-ui/core'
 class Header extends Component {
   constructor(props) {
     super(props)
-    this.handleLogin = this.handleLogin.bind(this)
-    this.doLogout = this.doLogout.bind(this)
     this.checkNav = this.checkNav.bind(this)
     this.state = {
       menuOpen: true
     }
-  }
-
-  doLogout(e) {
-    e.preventDefault()
-    this.props.dispatch(logout())
-  }
-
-  handleLogin(e) {
-    e.preventDefault()
-    Auth.doLogin((token, permissions, username, publicEmails) => {
-      this.props.dispatch(login(token, permissions, username, publicEmails))
-    })
   }
 
   gotoDocs() {
@@ -49,26 +31,6 @@ class Header extends Component {
       <NavItem eventKey={1} onClick={this.gotoDocs}>
         Documentation
       </NavItem>
-    )
-  }
-
-  renderLogin() {
-    const { session } = this.props
-
-    if (session?.isAnonymous && !session?.isFetching)
-      return (
-        <NavItem eventKey={1} onClick={this.handleLogin}>
-          <AccountCircleIcon />
-          Login
-        </NavItem>
-      )
-    return (
-      <>
-        <NavItem eventKey={1} onClick={this.doLogout}>
-          <ExitToAppIcon />
-          Logout
-        </NavItem>
-      </>
     )
   }
 
@@ -118,7 +80,6 @@ class Header extends Component {
               <nav className="top-nav px-2 d-flex justify-content-center align-items-center">
                 <ul role="group">
                   <NavItem href="https://docs.clearlydefined.io/docs/get-involved/intro">Get Involved</NavItem>
-                  {this.renderLogin()}
                 </ul>
               </nav>
             </div>
@@ -136,7 +97,6 @@ class Header extends Component {
                 {this.state.menuOpen && (
                   <ul role="group">
                     {/* {this.renderDocs()} */}
-                    {/* {this.renderLogin()} */}
                     {this.renderNavigation(navigation, session?.isAnonymous)}
                   </ul>
                 )}

@@ -76,14 +76,60 @@ export function patch(url, token, payload) {
 //     .then(handleResponse)
 // }
 
+// Detail pages remount often (tab switches, route changes) and fire the same GETs again.
+// Sharing the promise for identical in-flight requests avoids duplicate multi-megabyte
+// downloads without introducing a stale cache.
+const inFlight = new Map()
+
+function dedupe(key, request) {
+  const pending = inFlight.get(key)
+  if (pending) return pending
+  const promise = request().then(
+    result => {
+      inFlight.delete(key)
+      return result
+    },
+    error => {
+      inFlight.delete(key)
+      throw error
+    }
+  )
+  inFlight.set(key, promise)
+  return promise
+}
+
+// Some endpoints (notably raw harvest output) can hang for minutes on a cold cache and
+// leave the page stuck on a spinner. Fail fast instead so the UI can show an error.
+const REQUEST_TIMEOUT_MS = 60000
+
+function fetchWithTimeout(url, options) {
+  if (typeof AbortController === 'undefined') return fetch(url, options)
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+  return fetch(url, { ...options, signal: controller.signal }).then(
+    response => {
+      clearTimeout(timer)
+      return response
+    },
+    error => {
+      clearTimeout(timer)
+      throw error
+    }
+  )
+}
+
 export function get(url, token) {
-  return fetch(url, {
-    headers: getHeaders(token)
-  }).then(handleResponse)
+  return dedupe(`GET:${token ? 'auth' : 'anon'}:${url}`, () =>
+    fetchWithTimeout(url, {
+      headers: getHeaders(token)
+    }).then(handleResponse)
+  )
 }
 
 export function getList(url, token) {
-  return fetch(url, {
-    headers: getHeaders(token)
-  }).then(handleListResponse)
+  return dedupe(`LIST:${token ? 'auth' : 'anon'}:${url}`, () =>
+    fetchWithTimeout(url, {
+      headers: getHeaders(token)
+    }).then(handleListResponse)
+  )
 }

@@ -285,9 +285,8 @@ export default class FileList extends PureComponent {
         {breadcrumbs.map((item, index) => {
           return (
             <div
-              className={`${
-                breadcrumbs.length - 1 === index ? 'breadcrumb-item breadcrumb-last-item' : 'breadcrumb-item'
-              }`}
+              className={`${breadcrumbs.length - 1 === index ? 'breadcrumb-item breadcrumb-last-item' : 'breadcrumb-item'
+                }`}
               key={index}
               onClick={e => this.onBreadcrumbSelect(item, index)}
             >
@@ -422,7 +421,7 @@ export default class FileList extends PureComponent {
             onChange={this.handleChange}
             expandedRowKeys={expandedRows}
             onExpandedRowsChange={expandedRows => expandedRows.length > 0 && this.setState({ expandedRows })}
-            pagination={false}
+            pagination={{ pageSize: 100, hideOnSinglePage: true, showSizeChanger: false }}
           />
         </Paper>
       </div>

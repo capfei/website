@@ -7,7 +7,6 @@ import { connect } from 'react-redux'
 import get from 'lodash/get'
 import omitBy from 'lodash/omitBy'
 import isEmpty from 'lodash/isEmpty'
-import cloneDeep from 'lodash/cloneDeep'
 import PropTypes from 'prop-types'
 import notification from 'antd/lib/notification'
 import {
@@ -55,6 +54,7 @@ export class FullDetailPage extends AbstractFullDetailsView {
     this.close = this.close.bind(this)
     this.applyCurationSuggestion = this.applyCurationSuggestion.bind(this)
     this.getCurationData = this.getCurationData.bind(this)
+    this.loadHarvestedData = this.loadHarvestedData.bind(this)
     this.contributeModal = React.createRef()
   }
 
@@ -87,16 +87,26 @@ export class FullDetailPage extends AbstractFullDetailsView {
       token,
       uiInspectGetDefinition,
       uiInspectGetCurations,
-      uiInspectGetHarvested,
       getDefinitionSuggestedDataAction
     } = this.props
     if (!component) return
+    this.harvestRequestedFor = null
     uiInspectGetDefinition(token, component)
     uiInspectGetCurations(token, component)
-    uiInspectGetHarvested(token, component)
     getDefinitionSuggestedDataAction(token, component)
+    // Raw harvest output is frequently tens of megabytes and is only shown on the Raw Data
+    // tab, so it is fetched by loadHarvestedData() when that tab is first opened.
     //uiGetCurationsList(token, component)
     this.previewDefinition(component)
+  }
+
+  loadHarvestedData() {
+    const { token, component, uiInspectGetHarvested } = this.props
+    if (!component) return
+    const key = component.toPath ? component.toPath() : JSON.stringify(component)
+    if (this.harvestRequestedFor === key) return
+    this.harvestRequestedFor = key
+    uiInspectGetHarvested(token, component)
   }
 
   /**
@@ -273,27 +283,29 @@ function mapStateToProps(state, props) {
   const { currentDefinition } = props
   const path = Definition.getPathFromUrl(props)
   const component = props.component || Definition.getDefinitionEntity(path)
-  const curations = state.ui.inspect.curations && cloneDeep(state.ui.inspect.curations)
+  // These objects are treated as read-only downstream. Deep cloning them here ran on every
+  // store update and was the single biggest cost on large components.
+  const curations = state.ui.inspect.curations
   let previewDefinition, definition
   if (currentDefinition && currentDefinition.otherDefinition) {
     previewDefinition = Contribution.getChangesFromPreview(currentDefinition.otherDefinition, currentDefinition)
     definition = { ...state.ui.inspect.definition, item: currentDefinition.otherDefinition }
   } else {
     previewDefinition = Definition.getDefinitionPreview(state)
-    definition = state.ui.inspect.definition && cloneDeep(state.ui.inspect.definition)
+    definition = state.ui.inspect.definition
   }
 
   return {
     path,
     component,
-    filterValue: state.ui.inspect.filter && cloneDeep(state.ui.inspect.filter),
+    filterValue: state.ui.inspect.filter,
     token: state.session.token,
     session: state.session,
     definition,
     curations,
-    harvest: state.ui.inspect.harvested && cloneDeep(state.ui.inspect.harvested),
+    harvest: state.ui.inspect.harvested,
     previewDefinition,
-    inspectedCuration: state.ui.inspect.inspectedCuration && cloneDeep(state.ui.inspect.inspectedCuration)
+    inspectedCuration: state.ui.inspect.inspectedCuration
   }
 }
 
