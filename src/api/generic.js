@@ -72,7 +72,7 @@ export function post(url, token, payload) {
 // request never reached the API at all (failed preflight, timeout or dropped connection), so
 // nothing was written and it is safe to send again.
 const WRITE_RETRY_DELAYS_MS = [2000, 5000, 10000]
-const READ_RETRY_DELAYS_MS = [1000, 3000]
+const READ_RETRY_DELAYS_MS = [1000, 3000, 5000, 8000]
 const GATEWAY_ERRORS = [502, 503, 504, 524]
 
 function retry(attempt, shouldRetry, delays) {
@@ -134,7 +134,7 @@ function dedupe(key, request) {
 
 // A healthy API answers reads in well under a second; anything still open after this is the
 // stall that the CDN eventually kills at ~125s, so give up early and let the retry take over.
-const READ_TIMEOUT_MS = 30000
+const READ_TIMEOUT_MS = 20000
 
 function fetchWithTimeout(url, options, timeout) {
   if (typeof AbortController === 'undefined') return fetch(url, options)

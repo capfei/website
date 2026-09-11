@@ -21,9 +21,11 @@ class CurationsSection extends Component {
   render() {
     const { curations } = this.props
     const contributions = get(curations, 'item.contributions')
+    const failed = curations.error && curations.error.status !== 404
     return (
       <div>
         <LabelRenderer text={'Curations'} />
+        {failed && <p>Curations could not be loaded. Reload the page to try again.</p>}
         {curations.isFetched && (
           <div className="curationSection">
             {contributions ? (
