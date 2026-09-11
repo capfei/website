@@ -7,7 +7,7 @@ import ReactGA from 'react-ga'
 
 export default function withTracker(WrappedComponent, options = {}) {
   const trackPage = page => {
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production' && process.env.REACT_APP_GA_TRACKINGID) {
       ReactGA.set({
         page,
         ...options
