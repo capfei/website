@@ -68,12 +68,28 @@ export function post(url, token, payload) {
   }).then(handleResponse)
 }
 
+// The API frequently stalls until the CDN times it out. A rejection with no `status` means the
+// request never reached the API at all (failed preflight or dropped connection), so nothing was
+// written and it is safe to send again. Anything that came back with a status is left alone.
+const RETRY_DELAYS_MS = [2000, 5000, 10000]
+
+function retryIfUnsent(attempt, retriesLeft = RETRY_DELAYS_MS.length) {
+  return attempt().catch(error => {
+    if (error.status || retriesLeft === 0) throw error
+    const delay = RETRY_DELAYS_MS[RETRY_DELAYS_MS.length - retriesLeft]
+    return new Promise(resolve => setTimeout(resolve, delay)).then(() => retryIfUnsent(attempt, retriesLeft - 1))
+  })
+}
+
 export function patch(url, token, payload) {
-  return fetch(url, {
-    headers: getHeaders(token),
-    method: 'PATCH',
-    body: JSON.stringify(payload)
-  }).then(handleResponse)
+  const body = JSON.stringify(payload)
+  return retryIfUnsent(() =>
+    fetch(url, {
+      headers: getHeaders(token),
+      method: 'PATCH',
+      body
+    }).then(handleResponse)
+  )
 }
 
 // export function del(url, token) {
