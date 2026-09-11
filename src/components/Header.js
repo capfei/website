@@ -3,7 +3,7 @@
 
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import logo from '../images/web/logo.svg'
+import logo from '../images/logo.svg'
 import { withRouter } from 'react-router-dom'
 import { ROUTE_ROOT } from '../utils/routingConstants'
 import { NavItem } from 'react-bootstrap'
