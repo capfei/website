@@ -13,8 +13,8 @@ const Editor = React.lazy(() => import('@monaco-editor/react'))
 const serializedCache = new WeakMap()
 
 // Monaco copes with large documents once the expensive per-line features are off, but raw
-// harvest output can reach tens of megabytes, so keep a plain-text escape hatch for those.
-const MONACO_MAX_LENGTH = 5 * 1024 * 1024
+// harvest output can reach tens of megabytes, so beyond this it is served a page at a time.
+const MONACO_PAGE_LENGTH = 2 * 1024 * 1024
 const LARGE_DOCUMENT_LENGTH = 100 * 1024
 
 function serialize(item, type) {
@@ -30,6 +30,28 @@ function serialize(item, type) {
   return text
 }
 
+function countLines(text) {
+  return (text.match(/\n/g) || []).length
+}
+
+// Pages break on line boundaries so the content stays valid-looking and the line
+// numbers of each page can continue where the previous one left off.
+function paginate(text) {
+  const pages = []
+  let start = 0
+  let firstLine = 1
+  while (start < text.length) {
+    const boundary = text.indexOf('\n', start + MONACO_PAGE_LENGTH)
+    const end = boundary === -1 ? text.length : boundary + 1
+    const chunk = text.slice(start, end)
+    const lines = countLines(chunk)
+    pages.push({ text: chunk, firstLine, lastLine: firstLine + lines - 1 })
+    firstLine += lines
+    start = end
+  }
+  return pages
+}
+
 export default class RawDataRenderer extends Component {
   static propTypes = {
     value: PropTypes.object,
@@ -39,6 +61,44 @@ export default class RawDataRenderer extends Component {
   static defaultProps = {
     type: 'json'
   }
+  state = { page: 0 }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.value !== this.props.value || prevProps.type !== this.props.type) this.setState({ page: 0 })
+  }
+
+  getPages(text) {
+    if (!this.pages || this.pages.source !== text) this.pages = { source: text, list: paginate(text) }
+    return this.pages.list
+  }
+
+  renderPager(pages, page) {
+    const { page: index } = this.state
+    const totalLines = pages[pages.length - 1].lastLine
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+        <button
+          className="btn btn-default btn-sm"
+          disabled={index === 0}
+          onClick={() => this.setState({ page: index - 1 })}
+        >
+          Previous
+        </button>
+        <button
+          className="btn btn-default btn-sm"
+          disabled={index >= pages.length - 1}
+          onClick={() => this.setState({ page: index + 1 })}
+        >
+          Next
+        </button>
+        <span className="text-muted" style={{ marginLeft: '8px' }}>
+          Page {index + 1} of {pages.length} &mdash; lines {page.firstLine.toLocaleString()} to{' '}
+          {page.lastLine.toLocaleString()} of {totalLines.toLocaleString()}
+        </span>
+      </div>
+    )
+  }
+
   render() {
     const { value, name, type } = this.props
     if (!value) return <PlaceholderRenderer message={`Empty data`} />
@@ -51,19 +111,10 @@ export default class RawDataRenderer extends Component {
 
     const text = typeof value.transformed === 'string' ? value.transformed : serialize(value.item, type)
 
-    if (text.length > MONACO_MAX_LENGTH)
-      return (
-        <div>
-          <p className="text-muted">
-            This {name} is too large to open in the editor ({Math.round(text.length / 1024 / 1024)} MB).
-          </p>
-          <pre className="raw-data-plain" style={{ height: '400px', overflow: 'auto', margin: 0 }}>
-            {text}
-          </pre>
-        </div>
-      )
-
-    const isLarge = text.length > LARGE_DOCUMENT_LENGTH
+    const pages = this.getPages(text)
+    const index = Math.min(this.state.page, pages.length - 1)
+    const page = pages[index] || { text: '', firstLine: 1, lastLine: 1 }
+    const isLarge = page.text.length > LARGE_DOCUMENT_LENGTH
     const options = {
       selectOnLineNumbers: true,
       cursorSmoothCaretAnimation: !isLarge,
@@ -75,19 +126,24 @@ export default class RawDataRenderer extends Component {
       folding: !isLarge,
       wordWrap: 'off',
       occurrencesHighlight: !isLarge,
-      renderLineHighlight: isLarge ? 'none' : 'line'
+      renderLineHighlight: isLarge ? 'none' : 'line',
+      lineNumbers: number => `${number + page.firstLine - 1}`
     }
     return (
-      <Suspense fallback={<PlaceholderRenderer message={`Loading the ${name}`} />}>
-        <Editor
-          height="400px"
-          language={type}
-          value={text}
-          theme="vs-dark"
-          options={options}
-          editorDidMount={this.editorDidMount}
-        />
-      </Suspense>
+      <div>
+        {pages.length > 1 && this.renderPager(pages, page)}
+        <Suspense fallback={<PlaceholderRenderer message={`Loading the ${name}`} />}>
+          <Editor
+            key={index}
+            height="400px"
+            language={type}
+            value={page.text}
+            theme="vs-dark"
+            options={options}
+            editorDidMount={this.editorDidMount}
+          />
+        </Suspense>
+      </div>
     )
   }
 }
