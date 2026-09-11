@@ -25,6 +25,13 @@ scheme
   .variation('default')
 const colors = scheme.colors()
 
+// Recharts reserves 60px for the axis, which clips seven-digit counts.
+const formatCount = value => {
+  if (value >= 1000000) return `${value / 1000000}M`
+  if (value >= 1000) return `${value / 1000}K`
+  return `${value}`
+}
+
 export default class PageStatus extends Component {
   constructor(props) {
     super(props)
@@ -138,7 +145,7 @@ export default class PageStatus extends Component {
       <ResponsiveContainer height={500}>
         <LineChart data={this.state.requestsPerDay}>
           <XAxis dataKey="date" />
-          <YAxis />
+          <YAxis tickFormatter={formatCount} />
           <Tooltip />
           <Line type="monotone" dataKey="count" stroke={`#${colors[0]}`} />
         </LineChart>
@@ -152,7 +159,7 @@ export default class PageStatus extends Component {
         <BarChart data={this.state.crawledPerDay}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" />
-          <YAxis />
+          <YAxis tickFormatter={formatCount} />
           <Tooltip />
           <Legend />
           {Object.keys(
@@ -218,7 +225,7 @@ export default class PageStatus extends Component {
         <BarChart data={this.state.crawlbreakdown}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" />
-          <YAxis />
+          <YAxis tickFormatter={formatCount} />
           <Tooltip />
           <Legend />
           {types.map((type, index) => {
@@ -238,7 +245,7 @@ export default class PageStatus extends Component {
         <BarChart data={this.state.toolsRanPerDay}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" />
-          <YAxis />
+          <YAxis tickFormatter={formatCount} />
           <Tooltip />
           <Legend />
           {Object.keys(
