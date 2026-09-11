@@ -69,26 +69,36 @@ export function post(url, token, payload) {
 }
 
 // The API frequently stalls until the CDN times it out. A rejection with no `status` means the
-// request never reached the API at all (failed preflight or dropped connection), so nothing was
-// written and it is safe to send again. Anything that came back with a status is left alone.
-const RETRY_DELAYS_MS = [2000, 5000, 10000]
+// request never reached the API at all (failed preflight, timeout or dropped connection), so
+// nothing was written and it is safe to send again.
+const WRITE_RETRY_DELAYS_MS = [2000, 5000, 10000]
+const READ_RETRY_DELAYS_MS = [1000, 3000]
+const GATEWAY_ERRORS = [502, 503, 504, 524]
 
-function retryIfUnsent(attempt, retriesLeft = RETRY_DELAYS_MS.length) {
+function retry(attempt, shouldRetry, delays) {
   return attempt().catch(error => {
-    if (error.status || retriesLeft === 0) throw error
-    const delay = RETRY_DELAYS_MS[RETRY_DELAYS_MS.length - retriesLeft]
-    return new Promise(resolve => setTimeout(resolve, delay)).then(() => retryIfUnsent(attempt, retriesLeft - 1))
+    if (!delays.length || !shouldRetry(error)) throw error
+    const [delay, ...remaining] = delays
+    return new Promise(resolve => setTimeout(resolve, delay)).then(() => retry(attempt, shouldRetry, remaining))
   })
 }
 
+const wasNeverSent = error => !error.status
+
+// Reads change nothing, so a gateway error is worth repeating too.
+const readFailed = error => !error.status || GATEWAY_ERRORS.includes(error.status)
+
 export function patch(url, token, payload) {
   const body = JSON.stringify(payload)
-  return retryIfUnsent(() =>
-    fetch(url, {
-      headers: getHeaders(token),
-      method: 'PATCH',
-      body
-    }).then(handleResponse)
+  return retry(
+    () =>
+      fetch(url, {
+        headers: getHeaders(token),
+        method: 'PATCH',
+        body
+      }).then(handleResponse),
+    wasNeverSent,
+    WRITE_RETRY_DELAYS_MS
   )
 }
 
@@ -122,14 +132,14 @@ function dedupe(key, request) {
   return promise
 }
 
-// Some endpoints (notably raw harvest output) can hang for minutes on a cold cache and
-// leave the page stuck on a spinner. Fail fast instead so the UI can show an error.
-const REQUEST_TIMEOUT_MS = 60000
+// A healthy API answers reads in well under a second; anything still open after this is the
+// stall that the CDN eventually kills at ~125s, so give up early and let the retry take over.
+const READ_TIMEOUT_MS = 30000
 
-function fetchWithTimeout(url, options) {
+function fetchWithTimeout(url, options, timeout) {
   if (typeof AbortController === 'undefined') return fetch(url, options)
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+  const timer = setTimeout(() => controller.abort(), timeout)
   return fetch(url, { ...options, signal: controller.signal }).then(
     response => {
       clearTimeout(timer)
@@ -142,18 +152,22 @@ function fetchWithTimeout(url, options) {
   )
 }
 
-export function get(url, token) {
+export function get(url, token, { timeout = READ_TIMEOUT_MS } = {}) {
   return dedupe(`GET:${token ? 'auth' : 'anon'}:${url}`, () =>
-    fetchWithTimeout(url, {
-      headers: getReadHeaders(token)
-    }).then(handleResponse)
+    retry(
+      () => fetchWithTimeout(url, { headers: getReadHeaders(token) }, timeout).then(handleResponse),
+      readFailed,
+      READ_RETRY_DELAYS_MS
+    )
   )
 }
 
 export function getList(url, token) {
   return dedupe(`LIST:${token ? 'auth' : 'anon'}:${url}`, () =>
-    fetchWithTimeout(url, {
-      headers: getReadHeaders(token)
-    }).then(handleListResponse)
+    retry(
+      () => fetchWithTimeout(url, { headers: getReadHeaders(token) }, READ_TIMEOUT_MS).then(handleListResponse),
+      readFailed,
+      READ_RETRY_DELAYS_MS
+    )
   )
 }
