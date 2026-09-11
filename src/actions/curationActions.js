@@ -99,7 +99,16 @@ export function curateAction(token, spec) {
               })
             )
           })
-        } else dispatch(uiNotificationNew({ type: 'info', message: 'Failed contribution.', timeout: 5000 }))
+        } else {
+          const reason = error.status ? `${error.status} ${error.statusText || error.message}` : error.message
+          dispatch(
+            uiNotificationNew({
+              type: 'danger',
+              message: `Failed contribution: ${reason || 'the request did not reach the API'}`,
+              timeout: 10000
+            })
+          )
+        }
       }
     )
   }
