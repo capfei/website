@@ -12,9 +12,10 @@ const Editor = React.lazy(() => import('@monaco-editor/react'))
 // so it is done on demand and cached against the source object.
 const serializedCache = new WeakMap()
 
-// Monaco tokenizes the whole document up front and locks up the tab on very large
-// payloads, so anything bigger than this falls back to plain read-only text.
-const MONACO_MAX_LENGTH = 500 * 1024
+// Monaco copes with large documents once the expensive per-line features are off, but raw
+// harvest output can reach tens of megabytes, so keep a plain-text escape hatch for those.
+const MONACO_MAX_LENGTH = 5 * 1024 * 1024
+const LARGE_DOCUMENT_LENGTH = 100 * 1024
 
 function serialize(item, type) {
   const cached = serializedCache.get(item)
@@ -52,17 +53,29 @@ export default class RawDataRenderer extends Component {
 
     if (text.length > MONACO_MAX_LENGTH)
       return (
-        <pre className="raw-data-plain" style={{ height: '400px', overflow: 'auto', margin: 0 }}>
-          {text}
-        </pre>
+        <div>
+          <p className="text-muted">
+            This {name} is too large to open in the editor ({Math.round(text.length / 1024 / 1024)} MB).
+          </p>
+          <pre className="raw-data-plain" style={{ height: '400px', overflow: 'auto', margin: 0 }}>
+            {text}
+          </pre>
+        </div>
       )
 
+    const isLarge = text.length > LARGE_DOCUMENT_LENGTH
     const options = {
       selectOnLineNumbers: true,
-      cursorSmoothCaretAnimation: true,
+      cursorSmoothCaretAnimation: !isLarge,
       cursorStyle: 'block',
       cursorSurroundingLines: 1,
-      mouseWheelZoom: true
+      mouseWheelZoom: true,
+      // Each of these costs time proportional to the document length.
+      minimap: { enabled: !isLarge },
+      folding: !isLarge,
+      wordWrap: 'off',
+      occurrencesHighlight: !isLarge,
+      renderLineHighlight: isLarge ? 'none' : 'line'
     }
     return (
       <Suspense fallback={<PlaceholderRenderer message={`Loading the ${name}`} />}>
