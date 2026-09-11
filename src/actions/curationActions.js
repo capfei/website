@@ -101,11 +101,17 @@ export function curateAction(token, spec) {
           })
         } else {
           const reason = error.status ? `${error.status} ${error.statusText || error.message}` : error.message
+          // A timeout or CORS failure means the browser gave up, not that the API did -- the PR
+          // may still have been opened, so warn before the user resubmits and creates a duplicate.
+          const timedOut = !error.status || [502, 503, 504, 524].includes(error.status)
           dispatch(
             uiNotificationNew({
               type: 'danger',
-              message: `Failed contribution: ${reason || 'the request did not reach the API'}`,
-              timeout: 10000
+              message: timedOut
+                ? `Failed contribution: ${reason ||
+                'the API did not respond'}. It may still have been submitted -- check the curations for this component before trying again.`
+                : `Failed contribution: ${reason}`,
+              timeout: 15000
             })
           )
         }
