@@ -36,6 +36,12 @@
   border-radius: 50%;
 }
 
+.clearly-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .clearly-badge {
   border-radius: 50px;
   padding: 3px 8px;
