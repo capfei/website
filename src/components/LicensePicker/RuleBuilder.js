@@ -76,7 +76,13 @@ export default class RuleBuilder extends Component {
             ? this.renderHeaderRow(rule, path, conjunction)
             : null}
           <Col md={12} className="flex-center editable-container">
-            <SpdxPicker value={rule.license} onChange={value => updateLicense(value, path)} />
+            <SpdxPicker
+              value={rule.license}
+              onChange={value => updateLicense(value, path)}
+              // Typeahead only fires onChange when an item is picked from the menu, so a license
+              // that is typed out and then submitted directly would otherwise never be recorded.
+              onBlur={event => event.target.value !== rule.license && updateLicense(event.target.value, path)}
+            />
             {rule.license && (
               <div>
                 <input
@@ -117,7 +123,6 @@ export default class RuleBuilder extends Component {
 
   render() {
     const { rule } = this.props
-    console.log(rule)
     return (
       <Row>
         <Col md={12} className="flex">
