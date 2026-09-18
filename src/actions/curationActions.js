@@ -99,7 +99,23 @@ export function curateAction(token, spec) {
               })
             )
           })
-        } else dispatch(uiNotificationNew({ type: 'info', message: 'Failed contribution.', timeout: 5000 }))
+        } else {
+          // A 5xx means the API received the request and then gave up, so the PR may exist anyway.
+          // A rejection with no status never reached the API, so nothing was created.
+          const mayHaveSucceeded = [500, 502, 503, 504, 524].includes(error.status)
+          const reason = error.status
+            ? `${error.status} ${error.statusText || error.message}`
+            : error.message || 'the API is not responding'
+          dispatch(
+            uiNotificationNew({
+              type: 'danger',
+              message: mayHaveSucceeded
+                ? `Failed contribution: ${reason}. It may still have been submitted -- check the curations for this component before trying again.`
+                : `Failed contribution: ${reason}. Nothing was submitted; please try again.`,
+              timeout: 15000
+            })
+          )
+        }
       }
     )
   }

@@ -1,0 +1,53 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # react-scripts 3 uses webpack 4, which breaks on the OpenSSL 3 shipped with Node 18+.
+          node-version: 16
+
+      - run: npm install --legacy-peer-deps
+
+      - name: Build
+        env:
+          # Served from https://capfei.github.io/website/, so assets and routes live under /website.
+          PUBLIC_URL: /website
+          REACT_APP_SERVER: https://api.clearlydefined.io
+          CI: false
+        run: npm run build
+
+      - name: Add SPA fallback
+        run: cp build/index.html build/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

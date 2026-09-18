@@ -6,6 +6,20 @@ import Contribution from './contribution'
 
 // Abstract methods for FileList
 let key = 0
+
+// Name -> position lookup per sibling array. Without this, building the tree rescans the
+// whole sibling list for every file, which is quadratic on components with many files.
+const siblingIndexes = new WeakMap()
+
+function indexFor(result) {
+  let index = siblingIndexes.get(result)
+  if (!index) {
+    index = new Map()
+    siblingIndexes.set(result, index)
+  }
+  return index
+}
+
 export default class FileListSpec {
   constructor() {
     this.pathToTreeFolders = memoize(this.pathToTreeFolders)
@@ -28,12 +42,16 @@ export default class FileListSpec {
   }
 
   static getFolders(file, result, component, preview) {
+    if (!result) result = []
+    const index = indexFor(result)
     if (file.folders.length === 1) {
       key++
+      const name = file.folders[file.folders.length - 1]
+      if (!index.has(name)) index.set(name, result.length)
       result.push({
         ...file,
         key,
-        name: file.folders[file.folders.length - 1],
+        name,
         license: file.license || '',
         facets: this.getFileFacets(file.facets, component, preview, file.id),
         attributions: this.getFileAttributions(file.attributions, component, preview, file.id)
@@ -42,11 +60,12 @@ export default class FileListSpec {
       const folderName = file.folders[0]
       file.folders.splice(0, 1)
 
-      const index = result.findIndex(folder => folder.name === folderName)
-      if (index !== -1) {
-        result[index].children = this.getFolders({ ...file }, result[index].children, component, preview)
+      const existing = index.has(folderName) ? index.get(folderName) : -1
+      if (existing !== -1) {
+        result[existing].children = this.getFolders({ ...file }, result[existing].children, component, preview)
       } else {
         key++
+        index.set(folderName, result.length)
         result.push({
           ...file,
           key,

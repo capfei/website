@@ -419,7 +419,7 @@ export default class FileList extends PureComponent {
             onChange={this.handleChange}
             expandedRowKeys={expandedRows}
             onExpandedRowsChange={expandedRows => expandedRows.length > 0 && this.setState({ expandedRows })}
-            pagination={false}
+            pagination={{ pageSize: 100, hideOnSinglePage: true, showSizeChanger: false }}
           />
         </Paper>
       </div>

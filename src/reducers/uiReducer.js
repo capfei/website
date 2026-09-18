@@ -35,7 +35,6 @@ import tableReducer from './tableReducer'
 import { isEqual } from 'lodash'
 import valueReducer from './valueReducer'
 import itemReducer from './itemReducer'
-import yaml from 'js-yaml'
 import EntitySpec from '../utils/entitySpec'
 import { CURATION_BODIES, CURATION_POST } from '../actions/curationActions'
 
@@ -57,13 +56,15 @@ const contribution = combineReducers({
   definitions: tableReducer(UI_CONTRIBUTION_DEFINITIONS)
 })
 
+// No item transformers here on purpose: serializing these payloads to YAML/JSON is
+// expensive and only the Raw Data tab needs it, so RawDataRenderer does it on demand.
 const inspect = combineReducers({
   filter: valueReducer(UI_INSPECT_UPDATE_FILTER),
-  definition: itemReducer(UI_INSPECT_GET_DEFINITION, item => yaml.safeDump(item, { sortKeys: true })),
-  curations: itemReducer(UI_INSPECT_GET_CURATIONS, item => yaml.safeDump(item, { sortKeys: true })),
-  harvested: itemReducer(UI_INSPECT_GET_HARVESTED, item => JSON.stringify(item, null, 2)),
-  curationList: itemReducer(UI_GET_CURATIONS_LIST, item => yaml.safeDump(item, { sortKeys: true })),
-  inspectedCuration: itemReducer(UI_GET_CURATION_DATA, item => yaml.safeDump(item, { sortKeys: true }))
+  definition: itemReducer(UI_INSPECT_GET_DEFINITION),
+  curations: itemReducer(UI_INSPECT_GET_CURATIONS),
+  harvested: itemReducer(UI_INSPECT_GET_HARVESTED),
+  curationList: itemReducer(UI_GET_CURATIONS_LIST),
+  inspectedCuration: itemReducer(UI_GET_CURATION_DATA)
 })
 
 const definitions = combineReducers({

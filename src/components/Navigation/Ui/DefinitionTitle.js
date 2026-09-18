@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import get from 'lodash/get'
 import Tooltip from 'antd/lib/tooltip'
 import EntitySpec from '../../../utils/entitySpec'
-import { ROUTE_DEFINITIONS } from '../../../utils/routingConstants'
+import { ROUTE_DEFINITIONS, siteUrl } from '../../../utils/routingConstants'
 
 class DefinitionTitle extends Component {
   static propTypes = {
@@ -33,7 +33,7 @@ class DefinitionTitle extends Component {
     return get(definition, 'described.urls.registry') ? (
       <Tooltip title={this.renderDefinitionTitle()}>
         <a
-          href={`${window.location.origin}${ROUTE_DEFINITIONS}/${currentComponent.toPath()}`}
+          href={siteUrl(`${ROUTE_DEFINITIONS}/${currentComponent.toPath()}`)}
           // href={get(definition, 'described.urls.registry')}
           // target="_blank"
           rel="noopener noreferrer"

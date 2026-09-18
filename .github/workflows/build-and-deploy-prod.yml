@@ -1,10 +1,10 @@
 # This workflow will build a docker image, push it to ghcr.io, and deploy it to an Azure WebApp.
+# Upstream-only: it targets the ClearlyDefined Azure subscription, so this fork cannot run it.
+# Kept for upstream merges but no longer triggered by releases.
 name: Build and Deploy -- PROD
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
 
 jobs:
   upload-package-lock-json:

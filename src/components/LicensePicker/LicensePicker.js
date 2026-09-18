@@ -31,22 +31,8 @@ export default class LicensePicker extends Component {
 
   componentDidMount() {
     this.setState({
-      licenseExpression: this.props.value || '',
-      rules: this.props.value ? LicensePickerUtils.parseLicense(this.props.value) : { license: '' },
-      isValid: this.props.value ? LicensePickerUtils.isValidExpression(this.props.value) : false
+      rules: this.props.value ? LicensePickerUtils.parseLicense(this.props.value) : { license: '' }
     })
-  }
-
-  componentDidUpdate(_, prevState) {
-    const { rules, sequence } = this.state
-    if (sequence !== prevState.sequence) {
-      const licenseExpression = LicensePickerUtils.toString(rules)
-      this.setState({
-        ...this.state,
-        licenseExpression,
-        isValid: LicensePickerUtils.isValidExpression(licenseExpression)
-      })
-    }
   }
 
   restoreRules = async rule => {
@@ -128,7 +114,11 @@ export default class LicensePicker extends Component {
 
   render() {
     const { onChange, onClose } = this.props
-    const { rules, licenseExpression, isValid } = this.state
+    const { rules } = this.state
+    // Derived during render so that Save always sees the latest edit, including one committed
+    // by the blur that the Save click itself triggers.
+    const licenseExpression = LicensePickerUtils.toString(rules) || ''
+    const isValid = licenseExpression ? LicensePickerUtils.isValidExpression(licenseExpression) : false
     return (
       <div className="spdx-picker spdx-picker-license">
         <Row>

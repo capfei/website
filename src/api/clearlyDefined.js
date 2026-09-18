@@ -39,7 +39,8 @@ export const ORIGINS = {
 
 export function getHarvestResults(token, entity) {
   // TODO ensure that the entity has data all the way down to the revision (and no more)
-  return get(url(`${HARVEST}/${EntitySpec.withoutPR(entity).toPath()}`, { form: 'raw' }), token)
+  // Raw harvest output is frequently tens of megabytes, so it needs far longer than a normal read.
+  return get(url(`${HARVEST}/${EntitySpec.withoutPR(entity).toPath()}`, { form: 'raw' }), token, { timeout: 120000 })
 }
 
 export function harvest(token, spec) {

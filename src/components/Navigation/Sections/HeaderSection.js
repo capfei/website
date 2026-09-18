@@ -46,17 +46,19 @@ class HeaderSection extends Component {
         <div className="pkg-ver">
           <DefinitionRevision definition={item} showNamespace={false} component={component} />
         </div>
-        {isCurated && (
-          <Tag className="clearly-badge" color="purple">
-            Curated
-          </Tag>
-        )}
-        {hasPendingCurations && (
-          <Tag className="clearly-badge" color="green">
-            Pending curations
-          </Tag>
-        )}
-        <HarvestIndicator tools={get(item, 'described.tools')} />
+        <div className="clearly-badges">
+          {isCurated && (
+            <Tag className="clearly-badge" color="purple">
+              Curated
+            </Tag>
+          )}
+          {hasPendingCurations && (
+            <Tag className="clearly-badge" color="green">
+              Pending curations
+            </Tag>
+          )}
+          <HarvestIndicator tools={get(item, 'described.tools')} />
+        </div>
         {/* 
         <Row className="row-detail-header">
           <Col md={8}>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { get } from 'lodash'
 import { Button, ButtonGroup, ButtonToolbar, Dropdown as BSDropdown } from 'react-bootstrap'
 import EntitySpec from '../../../utils/entitySpec'
-import { ROUTE_DEFINITIONS } from '../../../utils/routingConstants'
+import { ROUTE_DEFINITIONS, siteUrl } from '../../../utils/routingConstants'
 import { withResize } from '../../../utils/WindowProvider'
 import Definition from '../../../utils/definition'
 import { ORIGINS } from '../../../api/clearlyDefined'
@@ -152,13 +152,13 @@ class ComponentButtons extends Component {
             )}
             {!isDefinitionEmpty && onInspect && (
               <ButtonWithTooltip tip="Dig into this definition">
-              <Button className="list-fa-button" onClick={this.inspectComponent.bind(this, currentComponent, definition)}>
+                <Button className="list-fa-button" onClick={this.inspectComponent.bind(this, currentComponent, definition)}>
                   <i className="fas fa-search" />
                 </Button>
               </ButtonWithTooltip>
             )}
             <a
-              href={`${window.location.origin}${ROUTE_DEFINITIONS}/${component.toPath()}`}
+              href={siteUrl(`${ROUTE_DEFINITIONS}/${component.toPath()}`)}
               className="list-fa-button btn btn-default"
               target="_blank"
               rel="noopener noreferrer"
