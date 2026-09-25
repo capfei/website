@@ -25,6 +25,7 @@ import FilterBar from '../../../FilterBar'
 import EntitySpec from '../../../../utils/entitySpec'
 import ActiveFilters from '../../Sections/ActiveFilters'
 import searchSvg from '../../../../images/icons/searchSvg.svg'
+
 /**
  * Page that show to the user a list of interesting definitions to curate
  */
@@ -47,16 +48,20 @@ class PageBrowse extends SystemManagedList {
   componentDidMount() {
     this.props.dispatch(uiNavigation({ to: ROUTE_ROOT }))
     const urlParams = getParamsFromUrl(this.props.location.search)
-    urlParams
-      ? this.setState(
+
+    // FIX: Check if object has keys rather than checking object truthiness
+    if (urlParams && Object.keys(urlParams).length > 0) {
+      this.setState(
         {
-          activeSort: urlParams.sort && urlParams.sort,
-          activeName: urlParams.name && urlParams.name,
+          activeSort: urlParams.sort ? urlParams.sort : 'releaseDate-desc',
+          activeName: urlParams.name ? urlParams.name : null,
           activeFilters: omit(urlParams, ['sort', 'name'])
         },
         () => this.updateData()
       )
-      : this.updateData()
+    } else {
+      this.updateData()
+    }
   }
 
   noRowsRenderer(isFetching) {
@@ -124,24 +129,6 @@ class PageBrowse extends SystemManagedList {
             {this.renderFilter(curateFilters, 'Fix something', 'curate', 'success', 'right-filter-dropdown')}
           </div>
         </div>
-        {/* <Row className="show-grid spacer">
-          <Col md={2} mdOffset={1}>
-            {this.renderFilter(curateFilters, 'Fix something', 'curate', 'success')}
-          </Col>
-          <Col md={8}> */}
-        {/* <div className={'horizontalBlock'}>
-              {this.renderFilter(types, 'Type', 'type')}
-              <span>&nbsp;</span>
-              <FilterBar
-                options={options}
-                onChange={this.onBrowse}
-                onSearch={this.onSearch}
-                onClear={this.onBrowse}
-                clearOnChange
-              />
-            </div> */}
-        {/* </Col>
-        </Row> */}
       </>
     )
   }
@@ -303,10 +290,16 @@ class PageBrowse extends SystemManagedList {
       } else query.name = activeName
     }
     const urlParams = getParamsToUrl(omit(query, ['continuationToken']))
-    this.props.history.replace({
-      pathname: this.props.location.pathname,
-      search: `?${urlParams}`
-    })
+    const newSearch = `?${urlParams}`
+
+    // Only trigger history.replace if the search query string has actually changed
+    if (this.props.location.search !== newSearch) {
+      this.props.history.replace({
+        pathname: this.props.location.pathname,
+        search: newSearch
+      })
+    }
+
     await this.props.dispatch(uiBrowseGet(this.props.token, query))
     if (this.props.definitions.entries)
       this.props.dispatch(

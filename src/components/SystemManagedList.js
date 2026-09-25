@@ -287,14 +287,20 @@ export default class SystemManagedList extends Component {
     const { selected } = this.state
     const selectedEntries = selected
       ? Object.entries(selected)
-          .map(s => (s[1] ? parseInt(s[0]) : null))
-          .filter(x => isNumber(x))
+        .map(s => (s[1] ? parseInt(s[0]) : null))
+        .filter(x => isNumber(x))
       : []
     const selectedComponents = components.transformedList.filter((_, i) => selectedEntries.includes(i))
     return { selectedEntries, selectedComponents }
   }
 
   async onChangeComponent(component, newComponent, field) {
+    // Early exit for expand/collapse toggles: bypass resetting state or incrementing sequence
+    if (field === 'expanded') {
+      this.updateList({ update: component, value: newComponent })
+      return
+    }
+
     const { selectedEntries, selectedComponents } = this.getSelectedComponents()
     // contribute all the components
     if (
@@ -444,7 +450,7 @@ export default class SystemManagedList extends Component {
     this.setState({ removeContributedDefinitions: false })
   }
 
-  updateList(_) {}
+  updateList(_) { }
 
   buildSaveSpec(list) {
     return list.map(component => EntitySpec.fromObject(component))

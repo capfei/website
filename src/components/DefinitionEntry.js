@@ -32,7 +32,13 @@ class DefinitionEntry extends React.Component {
     this.state = {
       modelOpen: false
     }
+
+    // Memoization cache to prevent unnecessary recalculations and infinite re-render loops
+    this.memoizedDefinition = null
+    this.lastRawDefinition = null
+    this.lastActiveFacets = null
   }
+
   static propTypes = {
     onChange: PropTypes.func.isRequired,
     onCurate: PropTypes.func,
@@ -188,9 +194,24 @@ class DefinitionEntry extends React.Component {
     }
   }
 
+  getFoldedDefinition(rawDefinition, activeFacets) {
+    if (
+      this.lastRawDefinition === rawDefinition &&
+      isEqual(this.lastActiveFacets, activeFacets)
+    ) {
+      return this.memoizedDefinition
+    }
+
+    this.lastRawDefinition = rawDefinition
+    this.lastActiveFacets = activeFacets
+    this.memoizedDefinition = this.foldFacets(rawDefinition, activeFacets)
+    return this.memoizedDefinition
+  }
+
   renderLabel(text) {
     return <b>{text}</b>
   }
+
   handleModel() {
     this.setState({ modelOpen: !this.state.modelOpen })
   }
@@ -220,8 +241,7 @@ class DefinitionEntry extends React.Component {
         </div>
       )
 
-    // TODO: find a way of calling this method less frequently. It's relatively expensive.
-    const definition = this.foldFacets(rawDefinition, this.props.activeFacets)
+    const definition = this.getFoldedDefinition(rawDefinition, this.props.activeFacets)
     const { licensed } = definition
     return (
       <div className="row row-panel-details">
@@ -229,19 +249,6 @@ class DefinitionEntry extends React.Component {
           <span className="panel-details__title">{this.renderLabel('Declared')}:</span>
           <div className="panel-details__value">
             {this.renderFieldWithToolTipIfDifferent('licensed.declared')}
-            {/* {this.renderWithToolTipIfDifferent(
-              'licensed.declared',
-              <LicensesRenderer
-                definition={definition}
-                field={'licensed.declared'}
-                readOnly={readOnly}
-                initialValue={this.getOriginalValue('licensed.declared')}
-                value={this.getValue('licensed.declared')}
-                onChange={this.fieldChange('licensed.declared')}
-                revertable
-                onRevert={() => onRevert('licensed.declared')}
-              />
-            )} */}
           </div>
         </div>
         <div className="col-md-6 d-flex justify-content-start align-items-center">
@@ -254,25 +261,6 @@ class DefinitionEntry extends React.Component {
           <span className="panel-details__title">{this.renderLabel('Source')}:</span>
           <div className="panel-details__value">
             {this.renderFieldWithToolTipIfDifferent('described.sourceLocation', a => Contribution.printCoordinates(a))}
-            {/* {this.renderWithToolTipIfDifferent(
-              'described.sourceLocation',
-              <ModalEditor
-                definition={definition}
-                field={'described.sourceLocation'}
-                extraClass={this.classIfDifferent('described.sourceLocation')}
-                readOnly={readOnly}
-                initialValue={Contribution.printCoordinates(this.getOriginalValue('described.sourceLocation'))}
-                value={Contribution.printCoordinates(this.getValue('described.sourceLocation'))}
-                onChange={this.fieldChange('described.sourceLocation', isEqual, Contribution.toSourceLocation)}
-                editor={SourcePicker}
-                validator={value => true}
-                placeholder={'Source location'}
-                revertable
-                onRevert={() => onRevert('described.sourceLocation')}
-              />,
-              'right',
-              Contribution.printCoordinates
-            )} */}
           </div>
         </div>
         <div className="col-md-6 d-flex justify-content-start align-items-center">
@@ -288,22 +276,6 @@ class DefinitionEntry extends React.Component {
               'described.releaseDate',
               a => Contribution.printDate(a) || '-- -- --'
             )}
-            {/* {this.renderWithToolTipIfDifferent(
-              'described.releaseDate',
-              <InlineEditor
-                field={'described.releaseDate'}
-                extraClass={this.classIfDifferent('described.releaseDate')}
-                readOnly={readOnly}
-                type="date"
-                initialValue={Contribution.printDate(this.getOriginalValue('described.releaseDate'))}
-                value={Contribution.printDate(this.getValue('described.releaseDate'))}
-                onChange={this.fieldChange('described.releaseDate')}
-                validator={value => true}
-                placeholder={'YYYY-MM-DD'}
-                revertable
-                onRevert={() => onRevert('described.releaseDate')}
-              />
-            )} */}
           </div>
         </div>
         <div className="col-md-6 d-flex justify-content-start align-items-center">
@@ -328,93 +300,6 @@ class DefinitionEntry extends React.Component {
           </button>
         </div>
       </div>
-      // <Row>
-      //   <Col sm={5}>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Declared')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         {this.renderWithToolTipIfDifferent(
-      //           'licensed.declared',
-      //           <LicensesRenderer
-      //             definition={definition}
-      //             field={'licensed.declared'}
-      //             readOnly={readOnly}
-      //             initialValue={this.getOriginalValue('licensed.declared')}
-      //             value={this.getValue('licensed.declared')}
-      //             onChange={this.fieldChange('licensed.declared')}
-      //             revertable
-      //             onRevert={() => onRevert('licensed.declared')}
-      //           />
-      //         )}
-      //       </Col>
-      //     </Row>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Source')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         {this.renderWithToolTipIfDifferent(
-      //           'described.sourceLocation',
-      //           <ModalEditor
-      //             definition={definition}
-      //             field={'described.sourceLocation'}
-      //             extraClass={this.classIfDifferent('described.sourceLocation')}
-      //             readOnly={readOnly}
-      //             initialValue={Contribution.printCoordinates(this.getOriginalValue('described.sourceLocation'))}
-      //             value={Contribution.printCoordinates(this.getValue('described.sourceLocation'))}
-      //             onChange={this.fieldChange('described.sourceLocation', isEqual, Contribution.toSourceLocation)}
-      //             editor={SourcePicker}
-      //             validator={value => true}
-      //             placeholder={'Source location'}
-      //             revertable
-      //             onRevert={() => onRevert('described.sourceLocation')}
-      //           />,
-      //           'right',
-      //           Contribution.printCoordinates
-      //         )}
-      //       </Col>
-      //     </Row>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Release')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         {this.renderWithToolTipIfDifferent(
-      //           'described.releaseDate',
-      //           <InlineEditor
-      //             field={'described.releaseDate'}
-      //             extraClass={this.classIfDifferent('described.releaseDate')}
-      //             readOnly={readOnly}
-      //             type="date"
-      //             initialValue={Contribution.printDate(this.getOriginalValue('described.releaseDate'))}
-      //             value={Contribution.printDate(this.getValue('described.releaseDate'))}
-      //             onChange={this.fieldChange('described.releaseDate')}
-      //             validator={value => true}
-      //             placeholder={'YYYY-MM-DD'}
-      //             revertable
-      //             onRevert={() => onRevert('described.releaseDate')}
-      //           />
-      //         )}
-      //       </Col>
-      //     </Row>
-      //   </Col>
-      //   <Col sm={7}>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Discovered')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         {this.renderPopover(licensed, 'discovered.expressions', 'Discovered')}
-      //       </Col>
-      //     </Row>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Attribution')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         {this.renderPopover(licensed, 'attribution.parties', 'Attributions')}
-      //       </Col>
-      //     </Row>
-      //     <Row>
-      //       <Col xs={3}>{this.renderLabel('Files')}</Col>
-      //       <Col xs={9} className="definition__line">
-      //         <FileCountRenderer definition={definition} />
-      //       </Col>
-      //     </Row>
-      //   </Col>
-      // </Row>
     )
   }
 
