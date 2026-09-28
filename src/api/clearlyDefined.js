@@ -37,6 +37,11 @@ export const ORIGINS = {
   cocoapods: { pod: ORIGINS_POD }
 }
 
+// Helper to bypass strict API gateways by double-encoding slashes
+function getSafePath(entity) {
+  return entity.toPath().replace(/%2F/g, '%252F')
+}
+
 export function getHarvestResults(token, entity) {
   // TODO ensure that the entity has data all the way down to the revision (and no more)
   // Raw harvest output is frequently tens of megabytes, so it needs far longer than a normal read.
@@ -54,10 +59,12 @@ export function harvest(token, spec) {
  * @param {object} params additional params added to the query string
  * @param {array} params.expand contains informations about the detail to be returned (e.g. ['prs','foo','bars']);
  */
+
+
 export function getCuration(token, entity, params = {}) {
   const { expand, state } = params
   return get(
-    url(`${CURATIONS}/${entity.toPath()}`, {
+    url(CURATIONS + '/' + getSafePath(entity), {
       expand,
       state
     }),
@@ -110,7 +117,7 @@ export function curate(token, spec) {
 export function getDefinition(token, entity, params = {}) {
   const { expandPrs } = params
   return get(
-    url(`${DEFINITIONS}/${entity.toPath()}`, {
+    url(DEFINITIONS + '/' + getSafePath(entity), {
       expand: expandPrs ? 'prs' : null,
       matchCasing: 'false'
     }),
@@ -135,11 +142,11 @@ export function getDefinitionSuggestions(token, prefix) {
 }
 
 export function getSuggestedData(token, entity) {
-  return get(url(`${SUGGESTIONS}/${EntitySpec.withoutPR(entity).toPath()}`), token)
+  return get(url(SUGGESTIONS + '/' + getSafePath(EntitySpec.withoutPR(entity))), token)
 }
 
 export function previewDefinition(token, entity, curation) {
-  return post(url(`${DEFINITIONS}/${entity.toPath()}`, { preview: true, matchCasing: 'false' }), token, curation)
+  return post(url(DEFINITIONS + '/' + getSafePath(entity), { preview: true, matchCasing: 'false' }), token, curation)
 }
 
 export async function getNotices(token, coordinates, renderer, options) {
