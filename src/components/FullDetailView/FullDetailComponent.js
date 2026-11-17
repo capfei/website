@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 import { Button } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import get from 'lodash/get'
-// import Spin from 'antd/lib/spin'
+/* import Spin from 'antd/lib/spin' */
 import FileList from '../FileList'
 import Contribution from '../../utils/contribution'
 import DescribedSection from '../Navigation/Sections/DescribedSection'
@@ -207,7 +207,7 @@ class FullDetailComponent extends Component {
         )
       return (
         <div className="container py-5 text-center">
-          // <Spin size="large" />
+          {/* <Spin size="large" /> */}
           <Typography variant="body2">Loading component details&hellip;</Typography>
         </div>
       )
